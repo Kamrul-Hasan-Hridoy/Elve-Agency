@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py~
+
+# Temporary
+tempCodeRunnerFile.py
+
+# Data files (optional)
+backend/data/*.json
+
+# Virtual Environment
+venv/
+env/
