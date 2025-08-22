@@ -9,7 +9,7 @@ home_bp = Blueprint('home', __name__)
 def get_home():
     if not os.path.exists(Config.HOME_DATA):
         return jsonify({"error": "Home data not found"}), 404
-    
+
     with open(Config.HOME_DATA, 'r') as f:
         data = json.load(f)
         return jsonify(data)

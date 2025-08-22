@@ -8,7 +8,7 @@ import os
 import logging
 from config import Config
 
-# Set up logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ projects_bp = Blueprint('projects', __name__)
 @projects_bp.route('/projects', methods=['GET'])
 def get_projects():
     try:
-        # Log request
+
         logger.info(f"Projects request received. Category: {request.args.get('category', 'All Blog')}")
         
         if not os.path.exists(Config.PROJECTS_DATA):
