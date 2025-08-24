@@ -16,7 +16,7 @@ __pycache__/
 tempCodeRunnerFile.py
 
 # Data files (optional)
-backend/data/*.json
+#backend/data/*.json
 
 # Virtual Environment
 venv/
@@ -45,11 +45,8 @@ dist/
 
 # Temporary
 tempCodeRunnerFile.py
-
-# Data files (optional)
-backend/data/*.json
-
+*.log
 # Frontend (ignore entire folder)
-frontend/
+
 backend/.env
 frontend/.env
