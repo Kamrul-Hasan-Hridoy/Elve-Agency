@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "desc": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+    "name": "Juan Rath",
+    "role": "Head of Product",
+    "img": "/images/Ellipse 2.png"
+  },
+  {
+    "id": 2,
+    "desc": "The team went above and beyond to deliver a website that exceeded our expectations. Their attention to detail and commitment to quality made all the difference seen a significant increase in traffic customer engagement!",
+    "name": "Francis Kovacek",
+    "role": "Founder",
+    "img": "/images/Ellipse 2.png"
+  },
+  {
+    "id": 3,
+    "desc": "The level of communication and collaboration we experienced while working with the agency was unparalleled. Not only were they responsive but also proactive with regular updates.",
+    "name": "Diana Wiegand",
+    "role": "CEO",
+    "img": "/images/Ellipse 2.png"
+  },
+  {
+    "id": 4,
+    "desc": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+    "name": "Jack",
+    "role": "Employee",
+    "img": "/images/Ellipse 2.png"
+  }
+]

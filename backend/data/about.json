@@ -1,0 +1,154 @@
+{
+  "learnContainer": {
+    "heading": "Learn More\nAbout Us",
+    "videoImage": "/images/Frame (4).png"
+  },
+  "storySection": {
+    "mainHeading": "The story of who we are\nand the vision that drives\nus forward",
+    "paragraphs": [
+      "Suffragium tui caritas. Validus laboriosam ars truculenter patior ante distinctio venia calco.Vae trans defere claro debeo tunc tibi vesica vita. Cubo truculenter omnis vis valeo tergiversatio debilito aestas odio dolorem.",
+      "Circumvenio textus magnam. Aestus canto demonstro. Causa absicio ultio repellat placeat ciminatio theologus subnecto. Pelor vacuus aperiam adipisci acidus arcesso vilicus opisoe."
+    ],
+    "images": [
+      "/images/Frame (5).png",
+      "/images/Frame (6).png"
+    ]
+  },
+  "coreValues": [
+    {
+      "icon": "/images/bubble-chart-line.png",
+      "title": "Velocity",
+      "description": "Consequatur nisi vulpes vito odit summisse patraus. Solum vel uberrime umquam adipisci ali ens cruetus cito dicta."
+    },
+    {
+      "icon": "/images/checkbox-multiple-line.png",
+      "title": "Brilliance",
+      "description": "Defero utor ciminatio ubi vere demitto virgo xiphias arbor. Trepide debilito solus distinctio ara talus tendo termes."
+    },
+    {
+      "icon": "/images/chat-smile-2-line.png",
+      "title": "Clarity",
+      "description": "Consequatur vix cavus admitto abbas vos villa caelum. Arceo assentator repesco somniculosus voluptas curtus sublime vere."
+    }
+  ],
+  "team": [
+    {
+      "image": "/images/Rectangle 64.png",
+      "name": "Lewis Mueller I",
+      "role": "UX/UI Designer"
+    },
+    {
+      "image": "/images/Rectangle 64 (1).png",
+      "name": "Kenny Murray",
+      "role": "Founder & Head of Design"
+    },
+    {
+      "image": "/images/image (1).png",
+      "name": "Leah Jacobson",
+      "role": "Creative Director"
+    },
+    {
+      "image": "/images/Rectangle 64 (2).png",
+      "name": "Ray Rolfson",
+      "role": "Marketing Specialist"
+    },
+    {
+      "image": "/images/image (1).png",
+      "name": "Lillie Bauer",
+      "role": "Project Manager"
+    }
+  ],
+  "services": [
+    {
+      "icon": "/images/bubble-chart-line.png",
+      "title": "Brand Identity",
+      "description": "Crafting visually stunning, user-centered websites tailored to your brand and business goals. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date."
+    },
+    {
+      "icon": "/images/computer-line.png",
+      "title": "Web Design",
+      "description": "Building websites optimized for all devices, from desktop to mobile. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date with trends."
+    },
+    {
+      "icon": "/images/code-s-slash-line.png",
+      "title": "Web Development",
+      "description": "Developing impactful logos and cohesive visual identities that resonate with your target audience. Designing business cards, brochures, and digital assets that align with your brand identity."
+    },
+    {
+      "icon": "/images/pie-chart-line.png",
+      "title": "Digital Marketing",
+      "description": "Optimizing your website and content to rank higher on search engines and attract organic traffic. Designing and executing personalized email campaigns to conversions."
+    }
+  ],
+  "testimonials": [
+    {
+      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+      "name": "Juan Rath",
+      "role": "Head of Product",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "The team went above and beyond to deliver a website that exceeded our expectations. Their attention to detail and commitment to quality made all the difference seen a significant increase in traffic customer engagement!",
+      "name": "Francis Kovacek",
+      "role": "Founder",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "The level of communication and collaboration we experienced while working with the agency was unparalleled. Not only were they responsive but also proactive with regular updates.",
+      "name": "Diana Wiegand",
+      "role": "CEO",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+      "name": "Jack",
+      "role": "Employee",
+      "image": "/images/Ellipse 2.png"
+    }
+  ],
+  "awards": [
+    {
+      "image": "/images/Group.png",
+      "title": "Top 100 Innovators in Digital Design"
+    },
+    {
+      "image": "/images/Group (1).png",
+      "title": "Gold Award for Creative Excellence"
+    },
+    {
+      "image": "/images/Group (2).png",
+      "title": "Excellence in Digital Marketing"
+    },
+    {
+      "image": "/images/Group (3).png",
+      "title": "Top 10 Digital Agencies Worldwide"
+    }
+  ],
+  "faqs": [
+    {
+      "question": "How do I contact you for inquiries or collaborations?",
+      "answer": "Best the average blind and that accordingly pointing, out the to bold, good my believed the rattling experiments friends couldn't scolded unable to many line may their times, propitiously is themselves, was discipline the be the seen escape.",
+      "open": true
+    },
+    {
+      "question": "What services does your digital agency offer?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "How long does it take to build a website?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "What is included in your digital marketing services?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "Can you create content for our social media accounts?",
+      "answer": "",
+      "open": false
+    }
+  ]
+}

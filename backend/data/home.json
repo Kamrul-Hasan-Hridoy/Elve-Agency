@@ -1,0 +1,200 @@
+{
+  "header": {
+    "title": "Building Digital <br /> Brand & Experience",
+    "description": "We specialize in crafting unique solutions that help brands make their mark. By combining creativity with strategy, we deliver designs that stand out in the digital landscape and resonate with audiences, ensuring your brand."
+  },
+  "banner": {
+    "videoThumb": "/images/video-thumb.png",
+    "statistics": [
+      {"value": "200+", "label": "Satisfied Clients"},
+      {"value": "600+", "label": "Projects done"},
+      {"value": "200M+", "label": "Total Revenue"},
+      {"value": "80+", "label": "Employee"}
+    ]
+  },
+  "bannerImage": "/images/Frame.png",
+  "serviceSection": {
+    "title": "How we helped <br /> other succeed"
+  },
+  "projects": [
+    {
+      "id": 1,
+      "image": "/images/Rectangle 63 (8).png",
+      "category": "Mobile App",
+      "title": "Boldstream",
+      "tags": ["Design", "Development"],
+      "description": "Comedo vel tripudio sordeo accendo deludo degusto adipisci dolores. Vergo curo quibusdam caput iste cerno nihil usus benigne."
+    },
+    {
+      "id": 2,
+      "image": "/images/Rectangle 63 (9).png",
+      "category": "Website Design",
+      "title": "InnovateX",
+      "tags": ["Design", "Development"],
+      "description": "Truculenter caterva tamquam cilicium admoveo consequuntur aufero. Derelinquo ceno amet molestiae crustulum tubineus."
+    },
+    {
+      "id": 3,
+      "image": "/images/Rectangle 63 (10).png",
+      "category": "Dashboard",
+      "title": "PixelForge",
+      "tags": ["Design", "Development"],
+      "description": "Sit sol solium magnam damnatio sed vox. Assentat vicissitudo apparatus comitatus attero is suffoco. Asperiores adnuo victoria volaticus templum."
+    },
+    {
+      "id": 4,
+      "image": "/images/Rectangle 63 (11).png",
+      "category": "Product Design",
+      "title": "SyncCraft",
+      "tags": ["Design", "Development"],
+      "description": "Corona stipes corrupti acerbitas. Adeptio videlicet clementia. Cunabula somnus porro cilicium cum teneo usus spent day."
+    }
+  ],
+  "about": {
+    "logo": "/images/logo.png",
+    "title": "Founded by computer enthusiasts, we are a digital design firm.",
+    "description": "We design unique user interfaces, mobile applications, and websites that transform how people interact with the digital world.",
+    "buttons": [
+      {"text": "Get in touch", "link": "#"},
+      {"text": "About us →", "link": "#"}
+    ]
+  },
+  "services": [
+    {
+      "icon": "/images/bubble-chart-line.png",
+      "title": "Brand Identity",
+      "description": "Crafting visually stunning, user-centered websites tailored to your brand and business goals. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date."
+    },
+    {
+      "icon": "/images/computer-line.png",
+      "title": "Web Design",
+      "description": "Building websites optimized for all devices, from desktop to mobile. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date with trends."
+    },
+    {
+      "icon": "/images/code-s-slash-line.png",
+      "title": "Web Development",
+      "description": "Developing impactful logos and cohesive visual identities that resonate with your target audience. Designing business cards, brochures, and digital assets that align with your brand identity."
+    },
+    {
+      "icon": "/images/pie-chart-line.png",
+      "title": "Digital Marketing",
+      "description": "Optimizing your website and content to rank higher on search engines and attract organic traffic. Designing and executing personalized email campaigns to conversions."
+    }
+  ],
+  "testimonials": [
+    {
+      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+      "name": "Juan Rath",
+      "role": "Head of Product",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "The team went above and beyond to deliver a website that exceeded our expectations. Their attention to detail and commitment to quality made all the difference seen a significant increase in traffic customer engagement!",
+      "name": "Francis Kovacek",
+      "role": "Founder",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "The level of communication and collaboration we experienced while working with the agency was unparalleled. Not only were they responsive but also proactive with regular updates.",
+      "name": "Diana Wiegand",
+      "role": "CEO",
+      "image": "/images/Ellipse 2.png"
+    },
+    {
+      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
+      "name": "Jack",
+      "role": "Employee",
+      "image": "/images/Ellipse 2.png"
+    }
+  ],
+  "pricing": {
+    "title": "Customizable <br /> Pricing Options",
+    "plans": [
+      {
+        "name": "Starter",
+        "badge": "Small Projects",
+        "description": "Perfect for New and Small Businesses",
+        "price": "$4500",
+        "period": "/mo",
+        "features": [
+          "Custom website design",
+          "Mobile-responsive development",
+          "1-month free maintenance",
+          "Social media integration"
+        ]
+      },
+      {
+        "name": "Professional",
+        "badge": "Big Projects",
+        "description": "Excellent for Growing Enterprises & Projects",
+        "price": "$6500",
+        "period": "/mo",
+        "features": [
+          "Social media marketing strategy",
+          "Custom CMS setup",
+          "Email marketing setup",
+          "Google Analytics integration"
+        ]
+      },
+      {
+        "name": "Full-Package",
+        "badge": "Full Product",
+        "description": "Tailored Services for Large Enterprises",
+        "price": "$8500",
+        "period": "/mo",
+        "features": [
+          "API integrations and automation",
+          "Dedicated account manager",
+          "UX/UI design for digital products",
+          "Ongoing support & maintenance"
+        ]
+      }
+    ],
+    "cta": {
+      "text": "Want a unique solution to meet your needs?",
+      "buttons": [
+        {"text": "Book a call →", "link": "#"},
+        {"text": "Contact us →", "link": "#"}
+      ]
+    }
+  },
+  "clients": [
+    {"logo": "/images/Company logo.png"},
+    {"logo": "/images/Company logo (1).png"},
+    {"logo": "/images/Company logo (2).png"},
+    {"logo": "/images/Company logo (3).png"},
+    {"logo": "/images/Company logo (4).png"},
+    {"logo": "/images/Company logo (5).png"},
+    {"logo": "/images/Company logo (6).png"},
+    {"logo": "/images/Company logo (7).png"},
+    {"logo": "/images/Company logo (8).png"},
+    {"logo": "/images/Company logo (9).png"}
+  ],
+  "faqs": [
+    {
+      "question": "How do I contact you for inquiries or collaborations?",
+      "answer": "Best the average blind and that accordingly pointing, out the to bold, good my believed the rattling experiments friends couldn't scolded unable to many line may their times, propitiously is themselves, was discipline the be the seen escape.",
+      "open": true
+    },
+    {
+      "question": "What services does your digital agency offer?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "How long does it take to build a website?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "What is included in your digital marketing services?",
+      "answer": "",
+      "open": false
+    },
+    {
+      "question": "Can you create content for our social media accounts?",
+      "answer": "",
+      "open": false
+    }
+  ]
+}

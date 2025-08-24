@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Starter",
+    "badge": "Small Projects",
+    "description": "Perfect for New and Small Businesses",
+    "price": "$4500",
+    "price_period": "/mo",
+    "features": [
+      "Custom website design",
+      "Mobile-responsive development",
+      "1-month free maintenance",
+      "Social media integration"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Professional",
+    "badge": "Big Projects",
+    "description": "Excellent for Growing Enterprises & Projects",
+    "price": "$6500",
+    "price_period": "/mo",
+    "features": [
+      "Social media marketing strategy",
+      "Custom CMS setup",
+      "Email marketing setup",
+      "Google Analytics integration"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Full-Package",
+    "badge": "Full Product",
+    "description": "Tailored Services for Large Enterprises",
+    "price": "$8500",
+    "price_period": "/mo",
+    "features": [
+      "API integrations and automation",
+      "Dedicated account manager",
+      "UX/UI design for digital products",
+      "Ongoing support & maintenance"
+    ]
+  }
+]
