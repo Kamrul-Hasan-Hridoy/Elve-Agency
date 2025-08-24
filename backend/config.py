@@ -2,12 +2,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# Define DATA_DIR once
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data'))
-
 class Config:
-    #MongoDB configuration
+    #DB configuration
     MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/elve_agency')
     MONGODB_DBNAME = os.getenv('MONGODB_DBNAME', 'elve_agency')
 
