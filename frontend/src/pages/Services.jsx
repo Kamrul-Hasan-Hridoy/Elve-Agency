@@ -1,29 +1,57 @@
 import React, { useEffect, useState } from "react";
+import { getImageUrl } from "../utils/imageLoader"; // Make sure this utility exists
 
 const Service = () => {
   const [services, setServices] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch services
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/services`)
-      .then(res => res.json())
-      .then(data => setServices(data))
-      .catch(err => console.error("Error fetching services:", err));
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch services
+        const servicesResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/services`);
+        if (!servicesResponse.ok) {
+          throw new Error(`HTTP error! status: ${servicesResponse.status}`);
+        }
+        const servicesData = await servicesResponse.json();
+        setServices(servicesData);
 
-    // Fetch testimonials
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/testimonials`)
-      .then(res => res.json())
-      .then(data => setTestimonials(data))
-      .catch(err => console.error("Error fetching testimonials:", err));
+        // Fetch testimonials
+        const testimonialsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/testimonials`);
+        if (testimonialsResponse.ok) {
+          const testimonialsData = await testimonialsResponse.json();
+          setTestimonials(testimonialsData);
+        }
 
-    // Fetch FAQs
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/faqs`)
-      .then(res => res.json())
-      .then(data => setFaqs(data))
-      .catch(err => console.error("Error fetching FAQs:", err));
+        // Fetch FAQs
+        const faqsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/faqs`);
+        if (faqsResponse.ok) {
+          const faqsData = await faqsResponse.json();
+          setFaqs(faqsData);
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) {
+    return <div className="loading">Loading services...</div>;
+  }
+
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
 
   return (
     <>
@@ -42,7 +70,7 @@ const Service = () => {
           <div className="service-box" key={index}>
             <div className="service-text">
               <div className="icon-title">
-                <img src={service.icon} alt={service.title} />
+                <img src={getImageUrl(service.icon)} alt={service.title} />
                 <h2>{service.title}</h2>
               </div>
               <p>{service.desc}</p>
@@ -55,7 +83,14 @@ const Service = () => {
               </div>
             </div>
             <div className="service-image">
-              <img src={service.image} alt={service.title} />
+              <img 
+                src={getImageUrl(service.image)} 
+                alt={service.title}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = getImageUrl('/placeholder.png');
+                }}
+              />
             </div>
           </div>
         ))}
@@ -81,7 +116,14 @@ const Service = () => {
                   <h3>{t.name}</h3>
                   <h6>{t.role}</h6>
                 </div>
-                <img src={t.img} alt={t.name} />
+                <img 
+                  src={getImageUrl(t.img)} 
+                  alt={t.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = getImageUrl('/placeholder.png');
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -114,4 +156,4 @@ const Service = () => {
   );
 };
 
-export default Service;
+export default Service;s
