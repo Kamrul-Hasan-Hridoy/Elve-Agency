@@ -214,7 +214,7 @@ const ServiceManager = ({ setMessage }) => {
         ) : (
           <div className="items-grid">
             {services.map(service => (
-              <div key={service._id} className="item-card">
+              <div key={service.id} className="item-card">
                 <h4>{service.title}</h4>
                 <p>{service.desc}</p>
                 <div className="item-actions">
