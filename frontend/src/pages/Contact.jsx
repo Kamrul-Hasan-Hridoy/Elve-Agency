@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -9,10 +9,29 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [faqs, setFaqs] = useState([]);
+  const [openIndex, setOpenIndex] = useState(null);
+
+  // Fetch FAQs from backend
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
+
+  const fetchFaqs = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/contact/faqs`
+      );
+      const data = await response.json();
+      setFaqs(data);
+    } catch (error) {
+      console.error("Error fetching FAQs:", error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
@@ -24,23 +43,29 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          full_name: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message
-        })
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/contact`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            full_name: formData.fullName,
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message
+          })
+        }
+      );
 
       const data = await response.json();
 
       if (data.success) {
-        setSubmitStatus({ type: 'success', message: 'Message sent successfully!' });
+        setSubmitStatus({
+          type: "success",
+          message: "Message sent successfully!"
+        });
         // Reset form
         setFormData({
           fullName: "",
@@ -49,13 +74,23 @@ const Contact = () => {
           message: ""
         });
       } else {
-        setSubmitStatus({ type: 'error', message: data.message || 'Failed to send message.' });
+        setSubmitStatus({
+          type: "error",
+          message: data.message || "Failed to send message."
+        });
       }
     } catch (error) {
-      setSubmitStatus({ type: 'error', message: 'Network error. Please try again.' });
+      setSubmitStatus({
+        type: "error",
+        message: "Network error. Please try again."
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const toggleFaq = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
@@ -86,45 +121,46 @@ const Contact = () => {
               </div>
             )}
             <form onSubmit={handleSubmit}>
-              <input 
-                type="text" 
-                placeholder="Full Name" 
+              <input
+                type="text"
+                placeholder="Full Name"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleInputChange}
                 required
               />
-              <input 
-                type="email" 
-                placeholder="Email Address" 
+              <input
+                type="email"
+                placeholder="Email Address"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
               />
-              <input 
-                type="tel" 
-                placeholder="Phone Number" 
+              <input
+                type="tel"
+                placeholder="Phone Number"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
               />
-              <textarea 
-                rows="4" 
-                placeholder="Enter your Message..." 
+              <textarea
+                rows="4"
+                placeholder="Enter your Message..."
                 name="message"
                 value={formData.message}
                 onChange={handleInputChange}
                 required
               />
               <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send a message →'}
+                {isSubmitting ? "Sending..." : "Send a message →"}
               </button>
             </form>
           </div>
         </div>
       </div>
 
+      {/* FAQ Section */}
       <div className="faq-section">
         <div className="faq-title">
           <h1>
@@ -137,46 +173,29 @@ const Contact = () => {
         </div>
 
         <div className="faq-container">
-          <div className="faq-item open">
-            <button className="faq-question">
-              How do I contact you for inquiries or collaborations?
-              <span className="icon">-</span>
-            </button>
-            <div className="faq-answer">
-              Best the average blind and that accordingly pointing, out the to
-              bold, good my believed the rattling experiments friends couldn't
-              scolded unable to many line may their times, propitiously is
-              themselves, was discipline the be the seen escape.
-            </div>
-          </div>
-
-          <div className="faq-item">
-            <button className="faq-question">
-              What services does your digital agency offer?
-              <span className="icon">+</span>
-            </button>
-          </div>
-
-          <div className="faq-item">
-            <button className="faq-question">
-              How long does it take to build a website?
-              <span className="icon">+</span>
-            </button>
-          </div>
-
-          <div className="faq-item">
-            <button className="faq-question">
-              What is included in your digital marketing services?
-              <span className="icon">+</span>
-            </button>
-          </div>
-
-          <div className="faq-item">
-            <button className="faq-question">
-              Can you create content for our social media accounts?
-              <span className="icon">+</span>
-            </button>
-          </div>
+          {faqs.length > 0 ? (
+            faqs.map((faq, index) => (
+              <div
+                key={index}
+                className={`faq-item ${openIndex === index ? "open" : ""}`}
+              >
+                <button
+                  className="faq-question"
+                  onClick={() => toggleFaq(index)}
+                >
+                  {faq.question}
+                  <span className="icon">
+                    {openIndex === index ? "-" : "+"}
+                  </span>
+                </button>
+                {openIndex === index && faq.answer && (
+                  <div className="faq-answer">{faq.answer}</div>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No FAQs available right now.</p>
+          )}
         </div>
       </div>
     </>
