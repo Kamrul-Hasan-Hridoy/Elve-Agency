@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useState, useEffect } from "react";
+
 
 const Pricing = () => {
   const [pricingPlans, setPricingPlans] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [clients, setClients] = useState([]);
   const [faqs, setFaqs] = useState([]);
+const [openFaqId, setOpenFaqId] = useState(null);
+
+const toggleFaq = (id) => {
+  setOpenFaqId(prev => (prev === id ? null : id));
+};
+
   const [loading, setLoading] = useState(true);
 
   const getImageUrl = (path) => {
@@ -81,9 +89,15 @@ const Pricing = () => {
           <p>Want a unique solution to meet your needs?</p>
           <div className="cta-btn">
             <button className="price-btns">Book a call →</button>
-            <button className="price-btns">Contact us →</button>
-          </div>
-        </div>
+    <button
+      className="price-btns"
+      onClick={() => window.location.href = "/contact"} // Redirect to contact page
+    >
+      Contact us →
+    </button>
+  </div>
+</div>
+
       </section>
       {/* Pricing section ends */}
 
@@ -141,17 +155,18 @@ const Pricing = () => {
             <br /> Question
           </h1>
         </div>
-        <div className="faq-container">
-          {faqs.map((faq) => (
-            <div className={`faq-item ${faq.open ? "open" : ""}`} key={faq.id}>
-              <button className="faq-question">
-                {faq.question}
-                <span className="icon">{faq.open ? "-" : "+"}</span>
-              </button>
-              {faq.answer && <div className="faq-answer">{faq.answer}</div>}
-            </div>
-          ))}
+            <div className="faq-container">
+      {faqs.map(faq => (
+        <div key={faq.id} className={`faq-item ${openFaqId === faq.id ? "open" : ""}`}>
+          <button className="faq-question" onClick={() => toggleFaq(faq.id)}>
+            {faq.question}
+            <span className="icon">{openFaqId === faq.id ? "-" : "+"}</span>
+          </button>
+          <div className="faq-answer">{faq.answer}</div>
         </div>
+      ))}
+</div>
+
       </div>
       {/* FAQ section ends */}
     </>
