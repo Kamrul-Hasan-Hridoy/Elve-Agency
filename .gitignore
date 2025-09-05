@@ -46,7 +46,8 @@ dist/
 # Temporary
 tempCodeRunnerFile.py
 *.log
-# Frontend (ignore entire folder)
+admin-panel.html
+
 
 backend/.env
 frontend/.env
