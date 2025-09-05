@@ -28,7 +28,7 @@ def get_home():
         return jsonify({"error": str(e)}), 500
 
 
-# Update whole home document
+# ✅ Update whole home document with flat structure
 @home_bp.route('/admin/home', methods=['PUT'])
 def update_home():
     try:
@@ -39,7 +39,7 @@ def update_home():
         return jsonify({"error": str(e)}), 500
 
 
-#  Update only specific section 
+# ✅ Update only specific section with flat structure
 @home_bp.route('/admin/home/section/<section>', methods=['PUT'])
 def update_home_section(section):
     try:

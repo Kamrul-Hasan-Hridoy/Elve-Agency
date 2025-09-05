@@ -16,7 +16,7 @@ def get_blogs():
             "category": 1,
             "date": 1,
             "read_time": 1,
-            "content": 1,
+            "content": 1,  # Include full content here
         }))
         for blog in blogs:
             blog["_id"] = str(blog["_id"])

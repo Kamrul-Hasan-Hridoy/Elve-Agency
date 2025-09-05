@@ -5,21 +5,25 @@ import TestimonialManager from './TestimonialManager';
 import AboutManager from './AboutManager';
 import ClientManager from './ClientManager';
 import FAQManager from './FAQManager';
-import PricingManager from './PricingManager'; 
+import PricingManager from './PricingManager';
 import ContactManager from './ContactManager';
+import BlogManager from './BlogManager';
+import ProjectManager from './ProjectManager';
+import HomeManager from './HomeManager'; 
+import './Admin.css';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('services');
+  const [activeTab, setActiveTab] = useState('home'); // Set home as default
   const [message, setMessage] = useState('');
-  const [unreadCount, setUnreadCount] = useState(0); 
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (token) {
       verifyToken(token);
-      fetchUnreadCount(); // Fetch unread count on login
+      fetchUnreadCount();
     }
   }, []);
 
@@ -70,16 +74,16 @@ const Admin = () => {
   const handleLogin = (token) => {
     localStorage.setItem('adminToken', token);
     setIsAuthenticated(true);
-    fetchUnreadCount(); // Fetch unread count after login
+    fetchUnreadCount();
   };
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     setIsAuthenticated(false);
-    setUnreadCount(0); // Reset unread count on logout
+    setUnreadCount(0);
   };
 
-  // Function to update unread count (will be passed to ContactManager)
+  // Function to update unread count
   const updateUnreadCount = (count) => {
     setUnreadCount(count);
   };
@@ -98,6 +102,12 @@ const Admin = () => {
       </header>
 
       <div className="admin-tabs">
+        <button
+          className={activeTab === 'home' ? 'active' : ''}
+          onClick={() => setActiveTab('home')}
+        >
+          Home Page
+        </button>
         <button
           className={activeTab === 'services' ? 'active' : ''}
           onClick={() => setActiveTab('services')}
@@ -129,10 +139,22 @@ const Admin = () => {
           Pricing
         </button>
         <button
+          className={activeTab === 'blogs' ? 'active' : ''}
+          onClick={() => setActiveTab('blogs')}
+        >
+          Blogs
+        </button>
+        <button
           className={activeTab === 'about' ? 'active' : ''}
           onClick={() => setActiveTab('about')}
         >
           About Page
+        </button>
+        <button
+          className={activeTab === 'projects' ? 'active' : ''}
+          onClick={() => setActiveTab('projects')}
+        >
+          Projects
         </button>
         <button
           className={activeTab === 'contact' ? 'active' : ''}
@@ -153,6 +175,9 @@ const Admin = () => {
       )}
 
       <div className="admin-content">
+        {activeTab === 'home' && (
+          <HomeManager setMessage={setMessage} />
+        )}
         {activeTab === 'services' && (
           <ServiceManager setMessage={setMessage} />
         )}
@@ -168,13 +193,19 @@ const Admin = () => {
         {activeTab === 'pricing' && (
           <PricingManager setMessage={setMessage} />
         )}
+        {activeTab === 'blogs' && (
+          <BlogManager setMessage={setMessage} />
+        )}
         {activeTab === 'about' && (
           <AboutManager setMessage={setMessage} />
+        )}
+        {activeTab === 'projects' && (
+          <ProjectManager setMessage={setMessage} />
         )}
         {activeTab === 'contact' && (
           <ContactManager 
             setMessage={setMessage} 
-            updateUnreadCount={updateUnreadCount} // Pass the function
+            updateUnreadCount={updateUnreadCount}
           />
         )}
       </div>

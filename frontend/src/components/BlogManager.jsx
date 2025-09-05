@@ -95,7 +95,7 @@ const BlogDetailsManager = ({ setMessage }) => {
       image: blog.image || '',
       date: blog.date || '',
       read_time: blog.read_time || '',
-      content: blog.content || ''
+      content: blog.content || ''   // ✅ Prevent undefined crash
     });
   };
 
