@@ -31,7 +31,6 @@ def get_services():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Keep the rest of your admin routes unchanged
 @services_bp.route('/services/admin', methods=['GET'])
 @auth_required
 def get_services_admin():

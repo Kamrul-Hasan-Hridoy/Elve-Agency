@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify
 from models import about_collection
-from bson import ObjectId
-import json
 
 about_bp = Blueprint('about', __name__)
 

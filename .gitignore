@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# VS Code
+.vscode/
+
 # Environment
 .env
 .env.local
@@ -11,43 +14,18 @@ __pycache__/
 *.pyo
 *.pyd
 *.py~
+*.log
 
-# Temporary
-tempCodeRunnerFile.py
-
-# Data files (optional)
-#backend/data/*.json
-
-# Virtual Environment
+# Virtual Environments
 venv/
+venv2/
 env/
-# macOS
-.DS_Store
+.venv/
 
-# Environment
-.env
-.env.local
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.py~
-
-# Virtual Environment
-.venv
-venv/
-.env
 # Node.js
 node_modules/
 dist/
 
-# Temporary
+# Temporary / Generated files
 tempCodeRunnerFile.py
-*.log
 admin-panel.html
-
-
-backend/.env
-frontend/.env

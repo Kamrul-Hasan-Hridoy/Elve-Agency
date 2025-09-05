@@ -6,15 +6,17 @@ const Navbar = () => {
     <header className="navbar-container">
       <nav className="navbar">
         <Link to='/' className="logo">
-          <span className="logo-icon">::</span>
-          <span className="logo-text">ElveAgency</span>
+          <span className="logo-icon">
+            <img src="/images/logo.png"className="logo-icon" />
+          </span>
+          <span className="logo-text">Elve Agency</span>
         </Link>
         <ul className="nav-links">
           <li>
-            <Link to="/project">Projects</Link>
+            <Link to="/project">Project</Link>
           </li>
           <li>
-            <Link to="/service">Services</Link>
+            <Link to="/service">Service</Link>
           </li>
           <li>
             <Link to="/about">About us</Link>
@@ -23,7 +25,7 @@ const Navbar = () => {
             <Link to="/pricing">Pricing</Link>
           </li>
           <li>
-            <Link to="/blogs">Blogs</Link>
+            <Link to="/blogs">Blog</Link>
           </li>
         </ul>
         <Link to="/contact" className="contact-btn">

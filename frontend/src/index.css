@@ -438,6 +438,99 @@ strong {
 
 /* Service section ends */
 
+/* Testimonial Manager Styles */
+
+/* testimonial section starts */
+
+.testimonial-section {
+  max-width: 1240px;
+  margin: auto;
+}
+
+.testimonial-content h2 {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  /* margin-bottom: 40px; */
+}
+
+.testimonial-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  padding: 24px;
+  background-color: #f7f7f7;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.testimonial-desc {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info {
+  flex-direction: column;
+  display: flex;
+}
+
+.info h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.info h6 {
+  font-size: 14px;
+  color: #666;
+}
+
+.user img {
+  object-fit: cover;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.arrows {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.arrow-btn {
+  background-color: #ffffff;
+  color: #000;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.arrow-btn:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+
 /* testimonial section starts */
 
 .testimonial-section {
@@ -720,7 +813,6 @@ ul li {
 /* Latest client section end  */
 
 /* Question section start */
-
 .faq-section {
   display: flex;
   justify-content: center;
@@ -751,6 +843,8 @@ ul li {
   background: white;
   border-radius: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* important for animation */
+  transition: all 0.3s ease;
 }
 
 .faq-question {
@@ -765,19 +859,34 @@ ul li {
   justify-content: space-between;
   align-items: center;
   margin: 16px 0;
+  cursor: pointer; /* indicate clickable */
 }
 
 .faq-answer {
-  padding: 0 20px 20px;
+  padding: 0 20px;
   font-size: 15px;
   font-weight: 400;
-  margin-top: 12px;
   line-height: 24px;
   color: #4c4c4c;
+
+  max-height: 0; /* collapsed */
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 500px; /* adjust based on content length */
+  opacity: 1;
 }
 
 .icon {
   font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.faq-item.open .icon {
+  transform: rotate(180deg); /* rotate + to - when open */
 }
 
 /* Question section end */
@@ -1851,4 +1960,241 @@ ul li {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
+}
+
+
+
+/* Blog Details Header............................ */
+.blog-details-header {
+  background: #f8f9fa;
+  padding: 20px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.blog-details-header .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-button {
+  color: #6c757d;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.back-button:hover {
+  color: #495057;
+}
+
+/* Featured Article */
+.featured-article {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+@media (min-width: 900px) {
+  .featured-article {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.featured-article .content {
+  flex: 1;
+}
+
+.featured-article .image-wrapper {
+  flex: 1;
+}
+
+.featured-article .image-wrapper img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.featured-article .category {
+  display: inline-block;
+  background: #4299e1;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.featured-article .headline {
+  font-size: 36px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+  color: #2d3748;
+}
+
+.featured-article .meta {
+  display: flex;
+  gap: 20px;
+  color: #718096;
+}
+
+/* Article Section */
+.article-section {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.article-section h2 {
+  font-size: 28px;
+  margin: 30px 0 20px;
+  color: #2d3748;
+}
+
+.article-section p {
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: #4a5568;
+}
+
+.article-section ul {
+  margin: 20px 0;
+  padding-left: 20px;
+}
+
+.article-section li {
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.article-section .image-block {
+  margin: 40px 0;
+}
+
+.article-section .image-block img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.quote-box {
+  background: #f8f9fa;
+  border-left: 4px solid #4299e1;
+  padding: 30px;
+  margin: 40px 0;
+  border-radius: 8px;
+}
+
+.quote-box p {
+  font-size: 20px;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.quote-box span {
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Related Articles */
+.related-articles {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+.related-articles h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #2d3748;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+@media (min-width: 700px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cardss {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+}
+
+.cardss:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.cardss img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.cardss-body {
+  padding: 20px;
+}
+
+.cardss-body .tag {
+  display: inline-block;
+  background: #4299e1;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.cardss-body h3 {
+  font-size: 18px;
+  margin: 12px 0;
+  color: #2d3748;
+}
+
+.cardss-body .meta {
+  display: flex;
+  justify-content: space-between;
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.read-more {
+  display: inline-block;
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: #718096;
 }

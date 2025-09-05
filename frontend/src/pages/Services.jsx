@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getImageUrl } from "../utils/imageLoader"; // Make sure this utility exists
+import { getImageUrl } from "../utils/imageLoader";
 
 const Service = () => {
   const [services, setServices] = useState([]);

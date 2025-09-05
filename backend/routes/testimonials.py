@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models import testimonials_collection
 from bson import ObjectId
-import json
+from datetime import datetime
 import os
 
 testimonials_bp = Blueprint('testimonials', __name__)
@@ -14,47 +14,108 @@ def get_testimonials():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@testimonials_bp.route('/admin/testimonials', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def manage_testimonials():
+@testimonials_bp.route('/admin/testimonials', methods=['GET'])
+def get_testimonials_admin():
     try:
-        if request.method == 'GET':
-            testimonials = list(testimonials_collection.find({}, {'_id': 0}))
-            return jsonify(testimonials)
+        testimonials = list(testimonials_collection.find({}))
+        # Convert ObjectId to string for JSON serialization
+        for testimonial in testimonials:
+            if '_id' in testimonial:
+                testimonial['_id'] = str(testimonial['_id'])
+        return jsonify(testimonials)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@testimonials_bp.route('/admin/testimonials', methods=['POST'])
+def add_testimonial():
+    try:
+        data = request.json
         
-        elif request.method == 'POST':
-            data = request.json
-            # Generate new ID
-            last_testimonial = testimonials_collection.find_one(sort=[("id", -1)])
-            new_id = last_testimonial['id'] + 1 if last_testimonial else 1
+        # Generate new ID - handle cases where id field might not exist
+        last_testimonial = testimonials_collection.find_one(sort=[("id", -1)])
+        
+        if last_testimonial and 'id' in last_testimonial:
+            new_id = last_testimonial['id'] + 1
+        else:
+            new_id = 1
+        
+        testimonial = {
+            "id": new_id,
+            "desc": data.get('desc', ''),
+            "name": data.get('name', ''),
+            "role": data.get('role', ''),
+            "img": data.get('img', "/images/Ellipse 2.png"),
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = testimonials_collection.insert_one(testimonial)
+        return jsonify({
+            "message": "Testimonial added successfully",
+            "id": new_id,
+            "_id": str(result.inserted_id)
+        }), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@testimonials_bp.route('/admin/testimonials/<testimonial_id>', methods=['PUT'])
+def update_testimonial(testimonial_id):
+    try:
+        data = request.json
+        
+        # Try to find by ID first (numeric)
+        try:
+            testimonial_id_int = int(testimonial_id)
+            query = {"id": testimonial_id_int}
+        except ValueError:
+            # If not numeric, try ObjectId
+            try:
+                query = {"_id": ObjectId(testimonial_id)}
+            except:
+                return jsonify({"error": "Invalid testimonial ID"}), 400
+        
+        update_data = {
+            "desc": data.get('desc', ''),
+            "name": data.get('name', ''),
+            "role": data.get('role', ''),
+            "img": data.get('img', "/images/Ellipse 2.png"),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = testimonials_collection.update_one(
+            query,
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Testimonial not found"}), 404
             
-            testimonial = {
-                "id": new_id,
-                "desc": data['desc'],
-                "name": data['name'],
-                "role": data['role'],
-                "img": data.get('img', "/images/Ellipse 2.png")
-            }
+        return jsonify({"message": "Testimonial updated successfully"})
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@testimonials_bp.route('/admin/testimonials/<testimonial_id>', methods=['DELETE'])
+def delete_testimonial(testimonial_id):
+    try:
+        # Try to find by ID first (numeric)
+        try:
+            testimonial_id_int = int(testimonial_id)
+            query = {"id": testimonial_id_int}
+        except ValueError:
+            # If not numeric, try ObjectId
+            try:
+                query = {"_id": ObjectId(testimonial_id)}
+            except:
+                return jsonify({"error": "Invalid testimonial ID"}), 400
+        
+        result = testimonials_collection.delete_one(query)
+        
+        if result.deleted_count == 0:
+            return jsonify({"error": "Testimonial not found"}), 404
             
-            testimonials_collection.insert_one(testimonial)
-            return jsonify({"message": "Testimonial added successfully"})
-        
-        elif request.method == 'PUT':
-            data = request.json
-            testimonials_collection.update_one(
-                {"id": data['id']},
-                {"$set": {
-                    "desc": data['desc'],
-                    "name": data['name'],
-                    "role": data['role'],
-                    "img": data.get('img', "/images/Ellipse 2.png")
-                }}
-            )
-            return jsonify({"message": "Testimonial updated successfully"})
-        
-        elif request.method == 'DELETE':
-            testimonial_id = request.args.get('id')
-            testimonials_collection.delete_one({"id": int(testimonial_id)})
-            return jsonify({"message": "Testimonial deleted successfully"})
+        return jsonify({"message": "Testimonial deleted successfully"})
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500

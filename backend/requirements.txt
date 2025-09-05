@@ -4,3 +4,9 @@ Flask-CORS
 python-dotenv
 pymongo
 dnspython
+python-jwt==2.8.0 
+Flask-JWT-Extended
+requests
+bcrypt  
+gunicorn==21.2.0 
+email-validator     

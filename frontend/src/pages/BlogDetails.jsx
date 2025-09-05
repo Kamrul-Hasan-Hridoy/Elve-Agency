@@ -1,128 +1,120 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 
 const BlogDetails = () => {
-  //fix image paths
+  const [blog, setBlog] = useState(null);
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
+
   const getImageUrl = (path) => {
     if (!path) return "";
     return `${import.meta.env.VITE_API_BASE_URL}${path}`;
   };
 
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch the specific blog details
+        const blogResponse = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/blogs/${id}`
+        );
+
+        if (!blogResponse.ok) {
+          const errorData = await blogResponse.json().catch(() => ({}));
+          throw new Error(
+            errorData.error || `Failed to fetch blog: ${blogResponse.status}`
+          );
+        }
+
+        const blogData = await blogResponse.json();
+
+        if (!blogData || Object.keys(blogData).length === 0) {
+          throw new Error("Blog not found");
+        }
+
+        setBlog(blogData);
+
+        // Fetch related blogs if category exists
+        if (blogData.category) {
+          const excludeId = blogData.id || blogData._id;
+          const relatedResponse = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/api/blogs?category=${blogData.category}&limit=3&exclude=${excludeId}`
+          );
+
+          if (relatedResponse.ok) {
+            const relatedData = await relatedResponse.json();
+            setRelatedBlogs(relatedData);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching blog:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogData();
+  }, [id]);
+
+  if (loading) {
+    return <div className="loading">Loading blog post...</div>;
+  }
+
+  if (error || !blog) {
+    return (
+      <div className="error">
+        <h2>Error loading blog</h2>
+        <p>{error || "Blog not found"}</p>
+        <Link to="/blogs">Back to Blogs</Link>
+      </div>
+    );
+  }
+
   return (
     <>
+      {/* Navigation Header */}
+      <header className="blog-details-header">
+        <div className="container">
+          <Link to="/blogs" className="back-button">
+            ← Back to Blogs
+          </Link>
+          <h1>Blog Details</h1>
+        </div>
+      </header>
+
+      {/* Featured Article */}
       <section className="featured-article">
         <div className="content">
-          <span className="category">Business</span>
-          <h1 className="headline">
-            The importance of ADA
-            <br />
-            compliance in web design
-          </h1>
+          <span className="category">{blog.category}</span>
+          <h1 className="headline">{blog.title}</h1>
           <div className="meta">
-            <span>📅 26/02/2025</span>
-            <span>⏱ 8 mins</span>
+            <span>📅 {blog.date}</span>
+            <span>⏱ {blog.read_time}</span>
           </div>
         </div>
         <div className="image-wrapper">
-          {}
-          <img src={getImageUrl("/images/Frame (7).png")} alt="" />
+          <img src={getImageUrl(blog.image)} alt={blog.title} />
         </div>
       </section>
 
+      {/* Blog Content */}
       <section className="article-section">
         <div className="article-container">
           <h2>Insights and Strategies</h2>
           <p>
-            In key moments like these, the answer can join us to the exactly
-            where of headlines held. In event intake be accuse own sell the
-            crossing search through business enthusiasm. Entire limits and a
-            mood follow quest to several unlimited moving the previously deep
-            financial people of solution.
-          </p>
-          <ul>
-            <li>
-              <strong>Statements of brand loyalty</strong> often take the shape
-              of fitness objects advertising.
-            </li>
-            <li>
-              <strong>Simple dependence builds over time</strong> and brand
-              normalization.
-            </li>
-            <li>
-              <strong>Which speaks</strong> with the environment like inspiring
-              copy from a browser.
-            </li>
-            <li>
-              <strong>Provides clarity</strong> to create accuracy alongside
-              verbal leadership.
-            </li>
-          </ul>
-
-          <h2>Essential Marketing Knowledge Awaits</h2>
-          <p>
-            Stay updated with the latest industry trends, learn from talented
-            creatives, and discover innovative approaches to grow your brand.
-            Whether you're a marketer, an entrepreneur, or someone who simply
-            appreciates high-value brand communication, our resources are
-            tailored to you.
-          </p>
-          <p>
-            Today's world expects brand leaders to stay ahead of the message's
-            narrative. They must take brave marketing steps that win attention,
-            build trust, and deliver consistent value. If you're focused on
-            brand elevation, demand generation, or pure awareness, it all starts
-            with one important trait: authenticity.
-          </p>
-
-          <div className="image-block">
-            {}
-            <img src={getImageUrl("/images/Frame0.png")} alt="" />
-          </div>
-
-          <h2>The Fixed Enormity, This Thousands Turner</h2>
-          <p>
-            The causes was wondrous. Be looking anxiety was entertaining space
-            overwhelmed towards sort of wide possible effort. Marketing
-            essentials include strategy, vision, and leadership. Each wave
-            potentially faster success can provide real opportunity for tangible
-            gains — not just vanity results. Launching with a clear objective
-            will shape your execution with purpose.
-          </p>
-
-          <h2>As have to Achieves Always People</h2>
-          <p>
-            How answer dominant the it and part. It is full or not between them.
-            Like lot processes you to direction you advised prepared ahead when
-            frame. A successful campaign isn't an accident. User data, brand
-            storytelling, and design are what shape today's strongest
-            performances. When used effectively, they remove the guesswork and
-            let the metrics lead.
-          </p>
-
-          <div className="quote-box">
-            <p>
-              “May fresh parents' divine series those they between briefs it
-              desk another,new found confidence took outlook over, the feel
-              powerful world carefully thefour outside a gone staged showed
-              where instead house.”
-            </p>
-            <span>Alex Joseph, CEO</span>
-          </div>
-
-          <h2>And Embarrassed been Create</h2>
-          <p>
-            Firstly, you might deal with a headset result itself. Relevant to
-            the state also time to transferring artwork, descriptive to help
-            worker priorities. And only now, we can capture the nuance and
-            transform your business touchpoints into experiences.
-          </p>
-          <p>
-            From inspiration to execution, we bring strategy, planning, and
-            intent to every brand element. Showcased as greatness that's aligned
-            with user needs. This isn't an aspiration; it's a transformation.
+            {blog.description ||
+              "In key moments like these, the answer can join us exactly where headlines held. Entire limits and a mood follow quest to several unlimited moving financial solutions."}
           </p>
         </div>
       </section>
 
+      {/* Related Blogs */}
       <section className="related-articles">
         <h2>
           More related
@@ -131,44 +123,28 @@ const BlogDetails = () => {
         </h2>
 
         <div className="cards-container">
-          <div className="cardss">
-            {}
-            <img src={getImageUrl("/images/Rectangle 63 (17).png")} alt="" />
-            <div className="cardss-body">
-              <span className="tag">Startups</span>
-              <h3>Elements that capture and retain user interest</h3>
-              <div className="meta">
-                <span>📅 26/02/2025</span>
-                <span>⏱ 7 mins</span>
+          {relatedBlogs.map((relatedBlog) => (
+            <div className="cardss" key={relatedBlog._id}>
+              <img
+                src={getImageUrl(relatedBlog.image)}
+                alt={relatedBlog.title}
+              />
+              <div className="cardss-body">
+                <span className="tag">{relatedBlog.category}</span>
+                <h3>{relatedBlog.title}</h3>
+                <div className="meta">
+                  <span>📅 {relatedBlog.date}</span>
+                  <span>⏱ {relatedBlog.read_time}</span>
+                </div>
+                <Link
+                  to={`/blogs/${relatedBlog.id || relatedBlog._id}`}
+                  className="read-more"
+                >
+                  Read More
+                </Link>
               </div>
             </div>
-          </div>
-
-          <div className="cardss">
-            {}
-            <img src={getImageUrl("/images/Rectangle 63 (24).png")} alt="" />
-            <div className="cardss-body">
-              <span className="tag">Marketing</span>
-              <h3>Top trends to watch and implement in 2024</h3>
-              <div className="meta">
-                <span>📅 26/02/2025</span>
-                <span>⏱ 10 mins</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="cardss">
-            {}
-            <img src={getImageUrl("/images/Rectangle 63 (18).png")} alt="" />
-            <div className="cardss-body">
-              <span className="tag">Design</span>
-              <h3>Engaging your audience in the digital age</h3>
-              <div className="meta">
-                <span>📅 26/02/2025</span>
-                <span>⏱ 4 mins</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
     </>

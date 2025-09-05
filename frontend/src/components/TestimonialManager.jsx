@@ -1,183 +1,341 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const TestimonialManager = ({ setMessage }) => {
   const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editingTestimonial, setEditingTestimonial] = useState(null);
-  const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
-    desc: "",
-    name: "",
-    role: "",
-    img: "/images/Ellipse 2.png"
+    name: '',
+    role: '',
+    desc: '',
+    img: '/images/Ellipse 2.png'
   });
+
+  const fetchTestimonials = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setTestimonials(data);
+      } else {
+        setMessage({ text: 'Failed to fetch testimonials', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error connecting to server', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchTestimonials();
   }, []);
 
-  const fetchTestimonials = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials`);
-      const data = await response.json();
-      setTestimonials(data);
-    } catch (error) {
-      console.error("Error fetching testimonials:", error);
-      setMessage({ text: "Failed to fetch testimonials", type: "error" });
-    }
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
+  // Handle form submission (add or update)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials`;
-      const method = editingTestimonial ? "PUT" : "POST";
+      const token = localStorage.getItem('adminToken');
+      let url, method;
+      
+      if (editingTestimonial) {
+        // For updates, use the ID from the testimonial being edited
+        const testimonialId = editingTestimonial.id || editingTestimonial._id;
+        url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials/${testimonialId}`;
+        method = 'PUT';
+      } else {
+        // For new testimonials, don't include an ID ,backend generate it
+        url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials`;
+        method = 'POST';
+      }
       
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(editingTestimonial ? {...formData, id: editingTestimonial.id} : formData),
+        body: JSON.stringify(formData),
       });
-
+      
+      const responseData = await response.json();
+      
       if (response.ok) {
-        setMessage({ text: `Testimonial ${editingTestimonial ? 'updated' : 'added'} successfully`, type: "success" });
-        resetForm();
-        fetchTestimonials();
+        setMessage({ 
+          text: editingTestimonial 
+            ? 'Testimonial updated successfully' 
+            : 'Testimonial added successfully', 
+          type: 'success' 
+        });
+        
+        setFormData({
+          name: '',
+          role: '',
+          desc: '',
+          img: '/images/Ellipse 2.png'
+        });
+        
+        setEditingTestimonial(null);
+        fetchTestimonials(); // Refresh the list
       } else {
-        setMessage({ text: "Failed to save testimonial", type: "error" });
+        setMessage({ 
+          text: responseData.error || 'Failed to save testimonial', 
+          type: 'error' 
+        });
       }
     } catch (error) {
-      console.error("Error saving testimonial:", error);
-      setMessage({ text: "Failed to save testimonial", type: "error" });
+      setMessage({ text: 'Error saving testimonial', type: 'error' });
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this testimonial?")) return;
-    
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials?id=${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setMessage({ text: "Testimonial deleted successfully", type: "success" });
-        fetchTestimonials();
-      } else {
-        setMessage({ text: "Failed to delete testimonial", type: "error" });
-      }
-    } catch (error) {
-      console.error("Error deleting testimonial:", error);
-      setMessage({ text: "Failed to delete testimonial", type: "error" });
-    }
-  };
-
+  // Edit a testimonial
   const handleEdit = (testimonial) => {
     setEditingTestimonial(testimonial);
     setFormData({
-      desc: testimonial.desc,
       name: testimonial.name,
       role: testimonial.role,
-      img: testimonial.img
+      desc: testimonial.desc,
+      img: testimonial.img || '/images/Ellipse 2.png'
     });
   };
 
-  const resetForm = () => {
+  // Delete a testimonial
+  const handleDelete = async (testimonial) => {
+    if (!window.confirm('Are you sure you want to delete this testimonial?')) {
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem('adminToken');
+      const testimonialId = testimonial.id || testimonial._id;
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials/${testimonialId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      
+      const responseData = await response.json();
+      
+      if (response.ok) {
+        setMessage({ text: 'Testimonial deleted successfully', type: 'success' });
+        fetchTestimonials(); // Refresh the list
+      } else {
+        setMessage({ 
+          text: responseData.error || 'Failed to delete testimonial', 
+          type: 'error' 
+        });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error deleting testimonial', type: 'error' });
+    }
+  };
+
+  // Cancel editing
+  const handleCancel = () => {
     setEditingTestimonial(null);
-    setIsAdding(false);
     setFormData({
-      desc: "",
-      name: "",
-      role: "",
-      img: "/images/Ellipse 2.png"
+      name: '',
+      role: '',
+      desc: '',
+      img: '/images/Ellipse 2.png'
     });
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  // Build image URL - handle both relative and absolute URLs
+  const buildImageUrl = (imgPath) => {
+    if (!imgPath) return '/images/placeholder.png';
+    
+    // If it's already a full URL, return as is
+    if (imgPath.startsWith('http')) return imgPath;
+    
+    // If it's a relative path, prepend the base URL
+    return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${imgPath}`;
   };
+
+  if (loading) {
+    return <div className="loading">Loading testimonials...</div>;
+  }
 
   return (
-    <div>
-      <h2>Testimonial Manager</h2>
+    <div className="testimonial-manager">
+      <div className="admin-page-header">
+        <h2>Testimonial Management</h2>
+        <p>Add, edit, or remove customer testimonials from your website</p>
+      </div>
       
-      <button 
-        onClick={() => setIsAdding(true)} 
-        className="add-btn"
-        style={{marginBottom: '20px'}}
-      >
-        Add New Testimonial
-      </button>
-
-      {(isAdding || editingTestimonial) && (
-        <div className="form-container" style={{marginBottom: '30px', padding: '20px', border: '1px solid #ccc', borderRadius: '5px'}}>
-          <h3>{editingTestimonial ? 'Edit' : 'Add'} Testimonial</h3>
-          <form onSubmit={handleSubmit}>
-            <div style={{marginBottom: '10px'}}>
-              <label>Description: </label>
-              <textarea 
-                name="desc" 
-                value={formData.desc} 
-                onChange={handleChange} 
-                required 
-                style={{width: '100%', minHeight: '100px'}}
+      <div className="admin-content-card">
+        <h3 className="form-title">{editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}</h3>
+        
+        <form onSubmit={handleSubmit} className="admin-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="name">Customer Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                placeholder="Enter customer's full name"
               />
             </div>
-            <div style={{marginBottom: '10px'}}>
-              <label>Name: </label>
-              <input 
-                type="text" 
-                name="name" 
-                value={formData.name} 
-                onChange={handleChange} 
-                required 
+            
+            <div className="form-group">
+              <label htmlFor="role">Role/Position *</label>
+              <input
+                type="text"
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                required
+                placeholder="e.g., CEO, Marketing Director"
               />
-            </div>
-            <div style={{marginBottom: '10px'}}>
-              <label>Role: </label>
-              <input 
-                type="text" 
-                name="role" 
-                value={formData.role} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            <div style={{marginBottom: '10px'}}>
-              <label>Image URL: </label>
-              <input 
-                type="text" 
-                name="img" 
-                value={formData.img} 
-                onChange={handleChange} 
-              />
-            </div>
-            <button type="submit">Save</button>
-            <button type="button" onClick={resetForm} style={{marginLeft: '10px'}}>Cancel</button>
-          </form>
-        </div>
-      )}
-
-      <div className="testimonials-list">
-        {testimonials.map(testimonial => (
-          <div key={testimonial.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
-            <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-              <img src={testimonial.img} alt={testimonial.name} width={50} height={50} style={{borderRadius: '50%'}} />
-              <div style={{marginLeft: '10px'}}>
-                <strong>{testimonial.name}</strong> ({testimonial.role})
-              </div>
-            </div>
-            <p>{testimonial.desc}</p>
-            <div>
-              <button onClick={() => handleEdit(testimonial)} style={{marginRight: '10px'}}>Edit</button>
-              <button onClick={() => handleDelete(testimonial.id)}>Delete</button>
             </div>
           </div>
-        ))}
+          
+          <div className="form-group">
+            <label htmlFor="desc">Testimonial Text *</label>
+            <textarea
+              id="desc"
+              name="desc"
+              value={formData.desc}
+              onChange={handleInputChange}
+              required
+              rows="4"
+              placeholder="What did the customer say about your service?"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="img">Profile Image URL</label>
+            <div className="input-with-preview">
+              <input
+                type="text"
+                id="img"
+                name="img"
+                value={formData.img}
+                onChange={handleInputChange}
+                placeholder="/images/profile.jpg"
+              />
+              {formData.img && (
+                <div className="image-preview">
+                  <img 
+                    src={buildImageUrl(formData.img)} 
+                    alt="Preview" 
+                    onError={(e) => {
+                      e.target.src = '/images/placeholder.png';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="input-help-text">Leave blank to use default profile image</p>
+          </div>
+          
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">
+              {editingTestimonial ? 'Update Testimonial' : 'Add Testimonial'}
+            </button>
+            
+            {editingTestimonial && (
+              <button type="button" onClick={handleCancel} className="btn btn-secondary">
+                Cancel Edit
+              </button>
+            )}
+            
+            {!editingTestimonial && (
+              <button type="button" onClick={handleCancel} className="btn btn-secondary">
+                Clear Form
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+      
+      <div className="admin-content-card">
+        <div className="card-header">
+          <h3>Existing Testimonials</h3>
+          <span className="items-count">{testimonials.length} testimonials</span>
+        </div>
+        
+        {testimonials.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">💬</div>
+            <h4>No testimonials yet</h4>
+            <p>Add your first testimonial to build trust with potential customers</p>
+          </div>
+        ) : (
+          <div className="testimonials-grid">
+            {testimonials.map((testimonial, index) => {
+              const uniqueKey = testimonial.id || testimonial._id || `testimonial-${index}`;
+              return (
+                <div key={uniqueKey} className="testimonial-card">
+                  <div className="testimonial-header">
+                    <div className="testimonial-image">
+                      <img 
+                        src={buildImageUrl(testimonial.img)} 
+                        alt={testimonial.name}
+                        onError={(e) => {
+                          e.target.src = '/images/placeholder.png';
+                        }}
+                      />
+                    </div>
+                    <div className="testimonial-info">
+                      <h4 className="testimonial-name">{testimonial.name}</h4>
+                      <p className="testimonial-role">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="testimonial-content">
+                    <p className="testimonial-text">"{testimonial.desc}"</p>
+                  </div>
+                  
+                  <div className="testimonial-actions">
+                    <button 
+                      onClick={() => handleEdit(testimonial)}
+                      className="btn btn-sm btn-outline"
+                    >
+                      <span className="icon">✏️</span> Edit
+                    </button>
+                    
+                    <button 
+                      onClick={() => handleDelete(testimonial)}
+                      className="btn btn-sm btn-outline btn-danger"
+                    >
+                      <span className="icon">🗑️</span> Delete
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
