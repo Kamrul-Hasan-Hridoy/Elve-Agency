@@ -58,54 +58,6 @@
       "role": "Project Manager"
     }
   ],
-  "services": [
-    {
-      "icon": "/images/bubble-chart-line.png",
-      "title": "Brand Identity",
-      "description": "Crafting visually stunning, user-centered websites tailored to your brand and business goals. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date."
-    },
-    {
-      "icon": "/images/computer-line.png",
-      "title": "Web Design",
-      "description": "Building websites optimized for all devices, from desktop to mobile. Ongoing support and updates to ensure your website remains secure, fast, and up-to-date with trends."
-    },
-    {
-      "icon": "/images/code-s-slash-line.png",
-      "title": "Web Development",
-      "description": "Developing impactful logos and cohesive visual identities that resonate with your target audience. Designing business cards, brochures, and digital assets that align with your brand identity."
-    },
-    {
-      "icon": "/images/pie-chart-line.png",
-      "title": "Digital Marketing",
-      "description": "Optimizing your website and content to rank higher on search engines and attract organic traffic. Designing and executing personalized email campaigns to conversions."
-    }
-  ],
-  "testimonials": [
-    {
-      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
-      "name": "Juan Rath",
-      "role": "Head of Product",
-      "image": "/images/Ellipse 2.png"
-    },
-    {
-      "description": "The team went above and beyond to deliver a website that exceeded our expectations. Their attention to detail and commitment to quality made all the difference seen a significant increase in traffic customer engagement!",
-      "name": "Francis Kovacek",
-      "role": "Founder",
-      "image": "/images/Ellipse 2.png"
-    },
-    {
-      "description": "The level of communication and collaboration we experienced while working with the agency was unparalleled. Not only were they responsive but also proactive with regular updates.",
-      "name": "Diana Wiegand",
-      "role": "CEO",
-      "image": "/images/Ellipse 2.png"
-    },
-    {
-      "description": "Their team didn't just take the project on; they became an integral extension of our business. From the very beginning, they immersed themselves in our brand and culture, that fit perfectly with our objectives.",
-      "name": "Jack",
-      "role": "Employee",
-      "image": "/images/Ellipse 2.png"
-    }
-  ],
   "awards": [
     {
       "image": "/images/Group.png",
