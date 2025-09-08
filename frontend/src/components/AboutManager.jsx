@@ -6,8 +6,7 @@ const AboutManager = ({ setMessage }) => {
     storySection: { mainHeading: '', paragraphs: [], images: [] },
     coreValues: [],
     team: [],
-    awards: [],
-    faqs: []
+    awards: []
   });
   const [activeSection, setActiveSection] = useState('learnContainer');
   const [saving, setSaving] = useState(false);
@@ -31,7 +30,9 @@ const AboutManager = ({ setMessage }) => {
       
       if (response.ok) {
         const data = await response.json();
-        setAboutData(data);
+        // Remove FAQs from the data as we're using the shared API now
+        const { faqs, ...aboutDataWithoutFaqs } = data;
+        setAboutData(aboutDataWithoutFaqs);
       } else {
         setMessage({ text: 'Failed to fetch about data', type: 'error' });
       }
@@ -53,8 +54,7 @@ const AboutManager = ({ setMessage }) => {
         'storySection': 'story-section',
         'coreValues': 'core-values',
         'team': 'team',
-        'awards': 'awards',
-        'faqs': 'faqs'
+        'awards': 'awards'
       };
       
       const apiSection = sectionMap[section] || section;
@@ -131,7 +131,7 @@ const AboutManager = ({ setMessage }) => {
       <h2>Manage About Page</h2>
       
       <div className="section-tabs">
-        {['learnContainer', 'storySection', 'coreValues', 'team', 'awards', 'faqs'].map(section => (
+        {['learnContainer', 'storySection', 'coreValues', 'team', 'awards'].map(section => (
           <button
             key={section}
             className={activeSection === section ? 'active' : ''}
@@ -195,23 +195,12 @@ const AboutManager = ({ setMessage }) => {
             saving={saving}
           />
         )}
-        
-        {activeSection === 'faqs' && (
-          <FaqsSection 
-            data={aboutData.faqs} 
-            onChange={handleInputChange}
-            onAdd={addArrayItem}
-            onRemove={removeArrayItem}
-            onSave={() => handleSectionUpdate('faqs', aboutData.faqs)}
-            saving={saving}
-          />
-        )}
       </div>
     </div>
   );
 };
 
-// Sub-components for each section
+// Sub-components for each section (remove FaqsSection)
 const LearnContainerSection = ({ data, onChange, onSave, saving }) => (
   <div className="form-section">
     <h3>Learn Container</h3>
@@ -425,57 +414,6 @@ const AwardsSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
     
     <button onClick={onSave} disabled={saving} className="save-btn">
       {saving ? 'Saving...' : 'Save Awards'}
-    </button>
-  </div>
-);
-
-const FaqsSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
-  <div className="form-section">
-    <h3>FAQs</h3>
-    {data.map((faq, index) => (
-      <div key={index} className="array-item card">
-        <h4>FAQ {index + 1}</h4>
-        <div className="form-group">
-          <label>Question:</label>
-          <input
-            type="text"
-            value={faq.question}
-            onChange={(e) => onChange('faqs', null, e.target.value, index, 'question')}
-          />
-        </div>
-        <div className="form-group">
-          <label>Answer:</label>
-          <textarea
-            value={faq.answer}
-            onChange={(e) => onChange('faqs', null, e.target.value, index, 'answer')}
-            rows="3"
-          />
-        </div>
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={faq.open || false}
-              onChange={(e) => onChange('faqs', null, e.target.checked, index, 'open')}
-            />
-            Open by default
-          </label>
-        </div>
-        <button onClick={() => onRemove('faqs', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
-    <button onClick={() => onAdd('faqs', {
-      question: 'New Question',
-      answer: 'Answer to the question',
-      open: false
-    })} className="add-btn">
-      Add FAQ
-    </button>
-    
-    <button onClick={onSave} disabled={saving} className="save-btn">
-      {saving ? 'Saving...' : 'Save FAQs'}
     </button>
   </div>
 );

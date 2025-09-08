@@ -1,8 +1,10 @@
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from datetime import datetime
+from bson import ObjectId
 
 # Import blueprints
 from routes.home import home_bp
@@ -104,6 +106,92 @@ def serve_css(filename):
 @app.route('/admin-panel')
 def serve_admin_panel():
     return send_from_directory('../frontend/public', 'admin-panel.html')
+
+# FAQ submission route for visitors
+@app.route('/api/submit-question', methods=['POST'])
+def submit_question():
+    try:
+        data = request.get_json()
+        if not data or 'question' not in data:
+            return jsonify({'error': 'Question is required'}), 400
+        
+        # Get the next ID
+        last_question = db.submitted_questions.find_one(sort=[("id", -1)])
+        next_id = last_question['id'] + 1 if last_question else 1
+        
+        question_data = {
+            'id': next_id,
+            'question': data['question'],
+            'email': data.get('email', ''),
+            'created_at': datetime.utcnow(),
+            'answered': False,
+            'answer': None,
+            'answered_at': None
+        }
+        
+        result = db.submitted_questions.insert_one(question_data)
+        return jsonify({
+            'message': 'Question submitted successfully',
+            'id': next_id
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to get unanswered questions for admin
+@app.route('/api/admin/submitted-questions')
+def get_submitted_questions():
+    try:
+        questions = list(db.submitted_questions.find({"answered": False}))
+        for question in questions:
+            question['_id'] = str(question['_id'])
+            # Convert datetime to string for JSON serialization
+            if 'created_at' in question and isinstance(question['created_at'], datetime):
+                question['created_at'] = question['created_at'].isoformat()
+        return jsonify(questions), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route for admin to answer a question
+@app.route('/api/admin/answer-question/<question_id>', methods=['PUT'])
+def answer_question(question_id):
+    try:
+        data = request.get_json()
+        if not data or 'answer' not in data:
+            return jsonify({'error': 'Answer is required'}), 400
+        
+        result = db.submitted_questions.update_one(
+            {'id': int(question_id)},
+            {'$set': {
+                'answer': data['answer'],
+                'answered': True,
+                'answered_at': datetime.utcnow()
+            }}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'error': 'Question not found'}), 404
+        
+        # Add the answered question to the FAQs collection
+        # Get the next FAQ ID
+        last_faq = db.faqs.find_one(sort=[("id", -1)])
+        next_faq_id = last_faq['id'] + 1 if last_faq else 1
+        
+        # Get the question data
+        question_data = db.submitted_questions.find_one({'id': int(question_id)})
+        
+        # Create FAQ entry
+        faq_data = {
+            'id': next_faq_id,
+            'question': question_data['question'],
+            'answer': data['answer'],
+            'open': False
+        }
+        
+        db.faqs.insert_one(faq_data)
+            
+        return jsonify({'message': 'Question answered successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Debug routes
 @app.route('/debug/routes')

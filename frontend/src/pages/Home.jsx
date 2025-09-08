@@ -12,16 +12,22 @@ const Home = () => {
   const [openFaqId, setOpenFaqId] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // FAQ - question submission
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [questionText, setQuestionText] = useState("");
+  const [questionEmail, setQuestionEmail] = useState("");
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+
   const getImageUrl = (path) => {
     if (!path) return null;
-    if (path.startsWith('http') || path.startsWith('//')) {
+    if (path.startsWith("http") || path.startsWith("//")) {
       return path;
     }
     return `${import.meta.env.VITE_API_BASE_URL}/images/${path}`;
   };
 
   const toggleFaq = (id) => {
-    setOpenFaqId(prev => (prev === id ? null : id));
+    setOpenFaqId((prev) => (prev === id ? null : id));
   };
 
   useEffect(() => {
@@ -40,7 +46,7 @@ const Home = () => {
             fetch(`${import.meta.env.VITE_API_BASE_URL}/api/testimonials`),
             fetch(`${import.meta.env.VITE_API_BASE_URL}/api/clients`),
             fetch(`${import.meta.env.VITE_API_BASE_URL}/api/faqs`),
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/pricing`)
+            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/pricing`),
           ]);
 
         const servicesData = await servicesRes.json();
@@ -65,6 +71,36 @@ const Home = () => {
 
     fetchData();
   }, []);
+
+  const handleQuestionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/submit-question`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: questionText,
+          email: questionEmail,
+        }),
+      });
+
+      if (response.ok) {
+        setQuestionSubmitted(true);
+        setQuestionText("");
+        setQuestionEmail("");
+        setTimeout(() => {
+          setShowQuestionForm(false);
+          setQuestionSubmitted(false);
+        }, 3000);
+      } else {
+        console.error("Failed to submit question");
+      }
+    } catch (error) {
+      console.error("Error submitting question:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -96,9 +132,9 @@ const Home = () => {
 
           <div className="banner-container">
             <div className="video-box">
-              <img 
-                src={getImageUrl(homeData.banner?.videoThumb)} 
-                alt="video-thumb" 
+              <img
+                src={getImageUrl(homeData.banner?.videoThumb)}
+                alt="video-thumb"
                 className="video-thumb"
               />
               <div className="play-button">▶</div>
@@ -117,19 +153,15 @@ const Home = () => {
 
       {/* Banner Image */}
       <div className="banner-img">
-        <img 
-          src={getImageUrl(homeData.bannerImage)} 
-          alt="Banner" 
-          className="main-banner"
-        />
+        <img src={getImageUrl(homeData.bannerImage)} alt="Banner" className="main-banner" />
       </div>
 
       {/* Service Section Title */}
       <section className="service-section">
         <div className="container">
-          <h2 
-            className="section-title" 
-            dangerouslySetInnerHTML={{ __html: homeData.serviceSection?.title || "" }} 
+          <h2
+            className="section-title"
+            dangerouslySetInnerHTML={{ __html: homeData.serviceSection?.title || "" }}
           />
         </div>
       </section>
@@ -139,9 +171,9 @@ const Home = () => {
         {projects.map((project) => (
           <div className="blog-title" key={project.id || project._id}>
             <div className="project-about">
-              <img 
-                src={getImageUrl(project.image)} 
-                alt={project.title} 
+              <img
+                src={getImageUrl(project.image)}
+                alt={project.title}
                 className="project-image"
               />
             </div>
@@ -170,9 +202,9 @@ const Home = () => {
       {/* About Section */}
       <div className="about-container">
         <div className="about-logo">
-          <img 
-            src={getImageUrl(homeData.about?.logo)} 
-            alt="About Logo" 
+          <img
+            src={getImageUrl(homeData.about?.logo)}
+            alt="About Logo"
             className="logo-img"
           />
         </div>
@@ -197,9 +229,9 @@ const Home = () => {
             {services.map((service, index) => (
               <div className="service-card" key={service.id || service._id || index}>
                 <div className="icon-box">
-                  <img 
-                    src={getImageUrl(service.icon)} 
-                    alt={service.title} 
+                  <img
+                    src={getImageUrl(service.icon)}
+                    alt={service.title}
                     className="service-icon"
                   />
                 </div>
@@ -227,15 +259,17 @@ const Home = () => {
           <div className="testimonial-container">
             {testimonials.map((testimonial) => (
               <div className="testimonial-card" key={testimonial.id || testimonial._id}>
-                <p className="testimonial-desc">{testimonial.desc || testimonial.description}</p>
+                <p className="testimonial-desc">
+                  {testimonial.desc || testimonial.description}
+                </p>
                 <div className="user">
                   <div className="info">
                     <h3>{testimonial.name}</h3>
                     <h6>{testimonial.role}</h6>
                   </div>
-                  <img 
-                    src={getImageUrl(testimonial.img || testimonial.image)} 
-                    alt={testimonial.name} 
+                  <img
+                    src={getImageUrl(testimonial.img || testimonial.image)}
+                    alt={testimonial.name}
                     className="user-avatar"
                   />
                 </div>
@@ -248,9 +282,12 @@ const Home = () => {
       {/* Pricing Section */}
       <section className="pricing-section">
         <div className="container">
-          <h1 
-            className="title" 
-            dangerouslySetInnerHTML={{ __html: homeData.pricing?.title || "Flexible pricing <br /> for every need" }} 
+          <h1
+            className="title"
+            dangerouslySetInnerHTML={{
+              __html:
+                homeData.pricing?.title || "Flexible pricing <br /> for every need",
+            }}
           />
 
           <div className="pricing-cards">
@@ -262,7 +299,8 @@ const Home = () => {
                 </div>
                 <p className="pricing-desc">{plan.description}</p>
                 <div className="price">
-                  {plan.price}<span>{plan.price_period || plan.period}</span>
+                  {plan.price}
+                  <span>{plan.price_period || plan.period}</span>
                 </div>
                 <button className="price-btn">Get Started →</button>
                 <ul>
@@ -275,7 +313,10 @@ const Home = () => {
           </div>
 
           <div className="cta-box">
-            <p>{homeData.pricing?.cta?.text || "Want a unique solution to meet your needs?"}</p>
+            <p>
+              {homeData.pricing?.cta?.text ||
+                "Want a unique solution to meet your needs?"}
+            </p>
             <div className="cta-btn">
               {homeData.pricing?.cta?.buttons ? (
                 homeData.pricing.cta.buttons.map((button, index) => (
@@ -301,9 +342,9 @@ const Home = () => {
           <div className="clients-grid">
             {clients.map((client) => (
               <div className="client-card" key={client.id || client._id}>
-                <img 
-                  src={getImageUrl(client.logo)} 
-                  alt={client.name || `Client ${client.id}`} 
+                <img
+                  src={getImageUrl(client.logo)}
+                  alt={client.name || `Client ${client.id}`}
                   className="client-logo"
                 />
               </div>
@@ -324,15 +365,70 @@ const Home = () => {
             </h1>
           </div>
           <div className="faq-container">
-            {faqs.map(faq => (
-              <div key={faq.id || faq._id} className={`faq-item ${openFaqId === (faq.id || faq._id) ? "open" : ""}`}>
-                <button className="faq-question" onClick={() => toggleFaq(faq.id || faq._id)}>
+            {faqs.map((faq) => (
+              <div
+                key={faq.id || faq._id}
+                className={`faq-item ${
+                  openFaqId === (faq.id || faq._id) ? "open" : ""
+                }`}
+              >
+                <button
+                  className="faq-question"
+                  onClick={() => toggleFaq(faq.id || faq._id)}
+                >
                   {faq.question}
-                  <span className="icon">{openFaqId === (faq.id || faq._id) ? "-" : "+"}</span>
+                  <span className="icon">
+                    {openFaqId === (faq.id || faq._id) ? "-" : "+"}
+                  </span>
                 </button>
-                {openFaqId === (faq.id || faq._id) && <div className="faq-answer">{faq.answer}</div>}
+                {openFaqId === (faq.id || faq._id) && (
+                  <div className="faq-answer">{faq.answer}</div>
+                )}
               </div>
             ))}
+
+            {/* Question Submission Form */}
+            <div className="question-submission">
+              {!showQuestionForm ? (
+                <button
+                  className="ask-question-btn"
+                  onClick={() => setShowQuestionForm(true)}
+                >
+                  Can't find your question? Ask us!
+                </button>
+              ) : (
+                <form className="question-form" onSubmit={handleQuestionSubmit}>
+                  <h3>Ask Your Question</h3>
+                  <textarea
+                    value={questionText}
+                    onChange={(e) => setQuestionText(e.target.value)}
+                    placeholder="Type your question here..."
+                    required
+                    rows="4"
+                  />
+                  <input
+                    type="email"
+                    value={questionEmail}
+                    onChange={(e) => setQuestionEmail(e.target.value)}
+                    placeholder="Your email (optional)"
+                  />
+                  <div className="question-form-buttons">
+                    <button type="submit">Submit Question</button>
+                    <button
+                      type="button"
+                      onClick={() => setShowQuestionForm(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {questionSubmitted && (
+                    <p className="success-message">
+                      Thank you! Your question has been submitted.
+                    </p>
+                  )}
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>

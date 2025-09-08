@@ -12,7 +12,7 @@ def get_about():
             about_data['_id'] = str(about_data['_id'])
             return jsonify(about_data)
         else:
-            # Return default data if no about data exists
+            # Return default data if no about data exists (without FAQs)
             return jsonify({
                 'learnContainer': {
                     'heading': 'Learn More\nAbout Us',
@@ -31,10 +31,7 @@ def get_about():
                 },
                 'coreValues': [],
                 'team': [],
-                'services': [],
-                'testimonials': [],
-                'awards': [],
-                'faqs': []
+                'awards': []
             })
     except Exception as e:
         return jsonify({'error': str(e)}), 500

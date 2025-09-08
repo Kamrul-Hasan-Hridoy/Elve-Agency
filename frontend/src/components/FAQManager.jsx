@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 
 const FAQManager = ({ setMessage }) => {
   const [faqs, setFaqs] = useState([]);
+  const [submittedQuestions, setSubmittedQuestions] = useState([]);
+  const [activeTab, setActiveTab] = useState("answered");
   const [editingFaq, setEditingFaq] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [answeringQuestion, setAnsweringQuestion] = useState(null);
+  const [answerText, setAnswerText] = useState("");
   const [formData, setFormData] = useState({
     question: "",
     answer: "",
@@ -11,8 +15,12 @@ const FAQManager = ({ setMessage }) => {
   });
 
   useEffect(() => {
-    fetchFaqs();
-  }, []);
+    if (activeTab === "answered") {
+      fetchFaqs();
+    } else {
+      fetchSubmittedQuestions();
+    }
+  }, [activeTab]);
 
   const fetchFaqs = async () => {
     try {
@@ -22,6 +30,17 @@ const FAQManager = ({ setMessage }) => {
     } catch (error) {
       console.error("Error fetching FAQs:", error);
       setMessage({ text: "Failed to fetch FAQs", type: "error" });
+    }
+  };
+
+  const fetchSubmittedQuestions = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/submitted-questions`);
+      const data = await response.json();
+      setSubmittedQuestions(data);
+    } catch (error) {
+      console.error("Error fetching submitted questions:", error);
+      setMessage({ text: "Failed to fetch submitted questions", type: "error" });
     }
   };
 
@@ -49,6 +68,31 @@ const FAQManager = ({ setMessage }) => {
     } catch (error) {
       console.error("Error saving FAQ:", error);
       setMessage({ text: "Failed to save FAQ", type: "error" });
+    }
+  };
+
+  const handleAnswerSubmit = async (questionId) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/answer-question/${questionId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ answer: answerText }),
+      });
+
+      if (response.ok) {
+        setMessage({ text: "Question answered successfully", type: "success" });
+        setAnsweringQuestion(null);
+        setAnswerText("");
+        fetchSubmittedQuestions();
+        fetchFaqs();
+      } else {
+        setMessage({ text: "Failed to answer question", type: "error" });
+      }
+    } catch (error) {
+      console.error("Error answering question:", error);
+      setMessage({ text: "Failed to answer question", type: "error" });
     }
   };
 
@@ -103,75 +147,149 @@ const FAQManager = ({ setMessage }) => {
     <div>
       <h2>FAQ Manager</h2>
       
-      <button 
-        onClick={() => setIsAdding(true)} 
-        className="add-btn"
-        style={{marginBottom: '20px'}}
-      >
-        Add New FAQ
-      </button>
+      <div style={{ marginBottom: '20px' }}>
+        <button 
+          onClick={() => setActiveTab("answered")} 
+          style={{ 
+            marginRight: '10px', 
+            backgroundColor: activeTab === "answered" ? '#007bff' : '#f8f9fa',
+            color: activeTab === "answered" ? 'white' : 'black'
+          }}
+        >
+          Answered FAQs
+        </button>
+        <button 
+          onClick={() => setActiveTab("submitted")}
+          style={{ 
+            backgroundColor: activeTab === "submitted" ? '#007bff' : '#f8f9fa',
+            color: activeTab === "submitted" ? 'white' : 'black'
+          }}
+        >
+          Submitted Questions
+        </button>
+      </div>
+      
+      {activeTab === "answered" && (
+        <>
+          <button 
+            onClick={() => setIsAdding(true)} 
+            className="add-btn"
+            style={{marginBottom: '20px'}}
+          >
+            Add New FAQ
+          </button>
 
-      {(isAdding || editingFaq) && (
-        <div className="form-container" style={{marginBottom: '30px', padding: '20px', border: '1px solid #ccc', borderRadius: '5px'}}>
-          <h3>{editingFaq ? 'Edit' : 'Add'} FAQ</h3>
-          <form onSubmit={handleSubmit}>
-            <div style={{marginBottom: '10px'}}>
-              <label>Question: </label>
-              <input 
-                type="text" 
-                name="question" 
-                value={formData.question} 
-                onChange={handleChange} 
-                required 
-                style={{width: '100%'}}
-              />
+          {(isAdding || editingFaq) && (
+            <div className="form-container" style={{marginBottom: '30px', padding: '20px', border: '1px solid #ccc', borderRadius: '5px'}}>
+              <h3>{editingFaq ? 'Edit' : 'Add'} FAQ</h3>
+              <form onSubmit={handleSubmit}>
+                <div style={{marginBottom: '10px'}}>
+                  <label>Question: </label>
+                  <input 
+                    type="text" 
+                    name="question" 
+                    value={formData.question} 
+                    onChange={handleChange} 
+                    required 
+                    style={{width: '100%'}}
+                  />
+                </div>
+                <div style={{marginBottom: '10px'}}>
+                  <label>Answer: </label>
+                  <textarea 
+                    name="answer" 
+                    value={formData.answer} 
+                    onChange={handleChange} 
+                    required 
+                    style={{width: '100%', minHeight: '100px'}}
+                  />
+                </div>
+                <div style={{marginBottom: '10px'}}>
+                  <label>
+                    <input 
+                      type="checkbox" 
+                      name="open" 
+                      checked={formData.open} 
+                      onChange={handleChange} 
+                    />
+                    Open by default
+                  </label>
+                </div>
+                <button type="submit">Save</button>
+                <button type="button" onClick={resetForm} style={{marginLeft: '10px'}}>Cancel</button>
+              </form>
             </div>
-            <div style={{marginBottom: '10px'}}>
-              <label>Answer: </label>
-              <textarea 
-                name="answer" 
-                value={formData.answer} 
-                onChange={handleChange} 
-                required 
-                style={{width: '100%', minHeight: '100px'}}
-              />
-            </div>
-            <div style={{marginBottom: '10px'}}>
-              <label>
-                <input 
-                  type="checkbox" 
-                  name="open" 
-                  checked={formData.open} 
-                  onChange={handleChange} 
-                />
-                Open by default
-              </label>
-            </div>
-            <button type="submit">Save</button>
-            <button type="button" onClick={resetForm} style={{marginLeft: '10px'}}>Cancel</button>
-          </form>
+          )}
+
+          <div className="faqs-list">
+            {faqs.map(faq => (
+              <div key={faq.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
+                <div style={{marginBottom: '10px'}}>
+                  <strong>Q: {faq.question}</strong>
+                </div>
+                <div style={{marginBottom: '10px'}}>
+                  <strong>A:</strong> {faq.answer}
+                </div>
+                <div>
+                  <span>Open by default: {faq.open ? 'Yes' : 'No'}</span>
+                </div>
+                <div style={{marginTop: '10px'}}>
+                  <button onClick={() => handleEdit(faq)} style={{marginRight: '10px'}}>Edit</button>
+                  <button onClick={() => handleDelete(faq.id)}>Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      
+      {activeTab === "submitted" && (
+        <div className="submitted-questions">
+          <h3>Submitted Questions</h3>
+          {submittedQuestions.length === 0 ? (
+            <p>No submitted questions.</p>
+          ) : (
+            submittedQuestions.map(question => (
+              <div key={question.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
+                <div style={{marginBottom: '10px'}}>
+                  <strong>Question: {question.question}</strong>
+                </div>
+                {question.email && (
+                  <div style={{marginBottom: '10px'}}>
+                    <strong>Email:</strong> {question.email}
+                  </div>
+                )}
+                <div style={{marginBottom: '10px'}}>
+                  <strong>Submitted:</strong> {new Date(question.created_at).toLocaleString()}
+                </div>
+                
+                {answeringQuestion === question.id ? (
+                  <div>
+                    <textarea
+                      value={answerText}
+                      onChange={(e) => setAnswerText(e.target.value)}
+                      placeholder="Type your answer here..."
+                      style={{width: '100%', minHeight: '100px', marginBottom: '10px'}}
+                    />
+                    <div>
+                      <button onClick={() => handleAnswerSubmit(question.id)} style={{marginRight: '10px'}}>Submit Answer</button>
+                      <button onClick={() => {
+                        setAnsweringQuestion(null);
+                        setAnswerText("");
+                      }}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => {
+                    setAnsweringQuestion(question.id);
+                    setAnswerText("");
+                  }}>Answer This Question</button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       )}
-
-      <div className="faqs-list">
-        {faqs.map(faq => (
-          <div key={faq.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
-            <div style={{marginBottom: '10px'}}>
-              <strong>Q: {faq.question}</strong>
-            </div>
-            <div style={{marginBottom: '10px'}}>
-              <strong>A:</strong> {faq.answer}
-            </div>
-            <div>
-              <span>Open by default: {faq.open ? 'Yes' : 'No'}</span>
-            </div>
-            <div style={{marginTop: '10px'}}>
-              <button onClick={() => handleEdit(faq)} style={{marginRight: '10px'}}>Edit</button>
-              <button onClick={() => handleDelete(faq.id)}>Delete</button>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

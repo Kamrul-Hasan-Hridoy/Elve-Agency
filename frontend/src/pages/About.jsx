@@ -7,8 +7,14 @@ const About = () => {
   const [error, setError] = useState(null);
   const [services, setServices] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [questionText, setQuestionText] = useState("");
+  const [questionEmail, setQuestionEmail] = useState("");
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+  const [openFaqId, setOpenFaqId] = useState(null);
 
-  // Fetch About + Services + Testimonials
+  // Fetch About + Services + Testimonials + FAQs
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -37,12 +43,9 @@ const About = () => {
           coreValues: [],
           team: [],
           awards: [],
-          faqs: [],
         };
 
         aboutJson = { ...defaultData, ...aboutJson };
-        aboutJson.faqs = aboutJson.faqs.map((f) => ({ ...f, open: false }));
-
         setAboutData(aboutJson);
 
         // Fetch Services
@@ -62,6 +65,15 @@ const About = () => {
           throw new Error(`Testimonials API error: ${testiRes.status}`);
         const testiJson = await testiRes.json();
         setTestimonials(Array.isArray(testiJson) ? testiJson : []);
+
+        // Fetch FAQs from the shared API
+        const faqsRes = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/faqs`
+        );
+        if (faqsRes.ok) {
+          const faqsJson = await faqsRes.json();
+          setFaqs(Array.isArray(faqsJson) ? faqsJson : []);
+        }
       } catch (err) {
         console.error("Error fetching About page data:", err);
         setError(err.message);
@@ -74,14 +86,38 @@ const About = () => {
   }, []);
 
   // Toggle FAQ open/close
-  const toggleFaq = (index) => {
-    setAboutData((prev) => {
-      if (!prev) return prev;
-      const updatedFaqs = prev.faqs.map((faq, i) =>
-        i === index ? { ...faq, open: !faq.open } : faq
-      );
-      return { ...prev, faqs: updatedFaqs };
-    });
+  const toggleFaq = (id) => {
+    setOpenFaqId(prev => (prev === id ? null : id));
+  };
+
+  const handleQuestionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/submit-question`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: questionText,
+          email: questionEmail
+        })
+      });
+
+      if (response.ok) {
+        setQuestionSubmitted(true);
+        setQuestionText("");
+        setQuestionEmail("");
+        setTimeout(() => {
+          setShowQuestionForm(false);
+          setQuestionSubmitted(false);
+        }, 3000);
+      } else {
+        console.error("Failed to submit question");
+      }
+    } catch (error) {
+      console.error("Error submitting question:", error);
+    }
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -237,7 +273,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* FAQs */}
+      {/* FAQs from shared API */}
       <div className="faq-section">
         <div className="faq-title">
           <h1>
@@ -249,17 +285,53 @@ const About = () => {
           </h1>
         </div>
         <div className="faq-container">
-          {aboutData.faqs.map((faq, i) => (
-            <div className={`faq-item ${faq.open ? "open" : ""}`} key={i}>
-              <button className="faq-question" onClick={() => toggleFaq(i)}>
+          {faqs.map(faq => (
+            <div key={faq.id} className={`faq-item ${openFaqId === faq.id ? "open" : ""}`}>
+              <button className="faq-question" onClick={() => toggleFaq(faq.id)}>
                 {faq.question}
-                <span className="icon">{faq.open ? "-" : "+"}</span>
+                <span className="icon">{openFaqId === faq.id ? "-" : "+"}</span>
               </button>
-              {faq.open && faq.answer && (
+              {openFaqId === faq.id && (
                 <div className="faq-answer">{faq.answer}</div>
               )}
             </div>
           ))}
+          
+          {/* Question Submission Form */}
+          <div className="question-submission">
+            {!showQuestionForm ? (
+              <button 
+                className="ask-question-btn"
+                onClick={() => setShowQuestionForm(true)}
+              >
+                Can't find your question? Ask us!
+              </button>
+            ) : (
+              <form className="question-form" onSubmit={handleQuestionSubmit}>
+                <h3>Ask Your Question</h3>
+                <textarea
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  placeholder="Type your question here..."
+                  required
+                  rows="4"
+                />
+                <input
+                  type="email"
+                  value={questionEmail}
+                  onChange={(e) => setQuestionEmail(e.target.value)}
+                  placeholder="Your email (optional)"
+                />
+                <div className="question-form-buttons">
+                  <button type="submit">Submit Question</button>
+                  <button type="button" onClick={() => setShowQuestionForm(false)}>Cancel</button>
+                </div>
+                {questionSubmitted && (
+                  <p className="success-message">Thank you! Your question has been submitted.</p>
+                )}
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict, field
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 import os
 from pymongo import MongoClient
@@ -55,6 +55,8 @@ faqs_collection = db["faqs"]
 about_collection = db["about"]
 blogs_collection = db["blogs"]
 contact_messages_collection = db["contact_messages"]
+# Add collection for submitted questions
+submitted_questions_collection = db["submitted_questions"]
 
 # Data Models
 
@@ -122,6 +124,16 @@ class FAQ:
     question: str
     answer: str
     open: bool
+
+@dataclass
+class SubmittedQuestion:
+    id: int
+    question: str
+    email: Optional[str] = None
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    answered: bool = False
+    answer: Optional[str] = None
+    answered_at: Optional[datetime] = None
 
 @dataclass
 class LearnContainer:
