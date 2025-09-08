@@ -55,12 +55,12 @@ Elve Agency is a comprehensive digital agency platform featuring a modern, respo
    MONGODB_URI=mongodb://localhost:27017/elve_agency
    MONGODB_DBNAME=elve_agency
    FLASK_ENV=development
-   SECRET_KEY=your-secure-secret-key-here
+   SECRET_KEY=123
    ```
 
 5. **Run database migration (if needed)**
    ```bash
-   python migrate_home_data.py
+   python migrate_home_data.py # Not necessary, so removed it.
    ```
 
 6. **Start the Flask development server**
@@ -168,19 +168,19 @@ Access the admin panel at: http://localhost:5001/admin-panel
 
 1. **Database Connection Errors**
    - Verify MongoDB is running
-   - Check connection string in environment variables
+   - Check the connection string in the environment variables
 
 2. **CORS Issues**
    - Ensure frontend URL is included in CORS configuration
    - Check Flask-CORS settings
 
 3. **Image Loading Problems**
-   - Verify image paths in database
+   - Verify image paths in the database
    - Check static file serving configuration
 
 4. **Admin Panel Authentication**
    - Ensure proper token management
-   - Verify admin user exists in database
+   - Verify admin user exists in the database
 
 ### Debug Endpoints
 - `GET /debug/routes` - List all available API routes
