@@ -1,8 +1,8 @@
 # macOS
 .DS_Store
-
-# VS Code
 .vscode/
+# VS Code
+.vscode/settings.json
 
 # Environment
 .env
