@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+// If you have a getImageUrl utility, import it
+// import { getImageUrl } from "../utils/getImageUrl";
+
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [filters, setFilters] = useState([]);
@@ -7,34 +10,32 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   useEffect(() => {
-    // Fetch filters
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/filters`)
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch filters');
+        if (!res.ok) throw new Error("Failed to fetch filters");
         return res.json();
       })
       .then(data => setFilters(data))
-      .catch(err => {
-        console.error("Error fetching filters:", err);
-        setError("Failed to load filters");
-      });
-    
-    // Fetch initial projects
-    fetchProjects("All Blog");
+      .catch(err => setError("Failed to load filters"));
+
+    fetchProjects(activeFilter);
   }, []);
 
   const fetchProjects = (category) => {
     setLoading(true);
     setError(null);
-    
-    const url = category === "All Blog"
-      ? `${import.meta.env.VITE_API_BASE_URL}/api/projects`
-      : `${import.meta.env.VITE_API_BASE_URL}/api/projects?category=${encodeURIComponent(category)}`;
-    
+
+    const url =
+      category === "All Blog"
+        ? `${import.meta.env.VITE_API_BASE_URL}/api/projects`
+        : `${import.meta.env.VITE_API_BASE_URL}/api/projects?category=${encodeURIComponent(category)}`;
+
     fetch(url)
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch projects');
+        if (!res.ok) throw new Error("Failed to fetch projects");
         return res.json();
       })
       .then(data => {
@@ -42,7 +43,7 @@ const Projects = () => {
         setLoading(false);
       })
       .catch(err => {
-        console.error("Error fetching projects:", err);
+        console.error(err);
         setError("Failed to load projects");
         setLoading(false);
       });
@@ -53,56 +54,52 @@ const Projects = () => {
     fetchProjects(filter);
   };
 
-  if (error) {
-    return (
-      <div className="error-message">
-        <p>{error}</p>
-        <button onClick={() => fetchProjects(activeFilter)}>Try Again</button>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '50vh'
-      }}>
-        <div className="loader"></div>
-      </div>
-    );
-  }
+  if (error) return <div>{error}</div>;
+  if (loading) return <div className="loader">Loading...</div>;
 
   return (
     <>
+      {/* Recent Work Section */}
       <section className="recent-work">
+        <div className="shape">
+          <img
+            src={fallbackShape} // Replace with getImageUrl if you have it
+            alt="shape"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallbackShape;
+            }}
+          />
+        </div>
+
         <h1>Recent Work</h1>
+
         <div className="filters">
-          {filters.map(filter => (
-            <button
-              key={filter}
-              className={activeFilter === filter ? "active" : ""}
-              onClick={() => handleFilterClick(filter)}
-            >
-              {filter}
-            </button>
-          ))}
+          {Array.isArray(filters) &&
+            filters.map((filter) => (
+              <button
+                key={filter}
+                className={activeFilter === filter ? "active" : ""}
+                onClick={() => handleFilterClick(filter)}
+              >
+                {filter}
+              </button>
+            ))}
         </div>
       </section>
 
+      {/* Projects List */}
       <div className="blog-post">
         {projects.length > 0 ? (
-          projects.map(project => (
+          projects.map((project) => (
             <div className="blog-title" key={project.id}>
               <div className="project-about">
-                <img 
-                  src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/images/${project.image}`} 
-                  alt={project.title} 
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/images/${project.image}`}
+                  alt={project.title}
                   onError={(e) => {
-                    e.target.onerror = null; 
-                    e.target.src = '/placeholder.png';
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/placeholder.png";
                   }}
                 />
               </div>
@@ -112,12 +109,13 @@ const Projects = () => {
                 </button>
                 <h2 className="blog-sub">{project.title}</h2>
                 <p>
-                  {project.tags && project.tags.map((tag, index) => (
-                    <React.Fragment key={index}>
-                      {index > 0 && " . "}
-                      <strong>{tag}</strong>
-                    </React.Fragment>
-                  ))}
+                  {project.tags &&
+                    project.tags.map((tag, index) => (
+                      <React.Fragment key={index}>
+                        {index > 0 && " . "}
+                        <strong>{tag}</strong>
+                      </React.Fragment>
+                    ))}
                 </p>
                 <p className="blog-desc">{project.description}</p>
                 <button className="project-btn">
