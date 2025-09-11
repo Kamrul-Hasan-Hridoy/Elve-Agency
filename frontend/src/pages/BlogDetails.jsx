@@ -13,13 +13,14 @@ const BlogDetails = () => {
     return `${import.meta.env.VITE_API_BASE_URL}${path}`;
   };
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   useEffect(() => {
     const fetchBlogData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch the specific blog details
         const blogResponse = await fetch(
           `${import.meta.env.VITE_API_BASE_URL}/api/blogs/${id}`
         );
@@ -32,14 +33,11 @@ const BlogDetails = () => {
         }
 
         const blogData = await blogResponse.json();
-
         if (!blogData || Object.keys(blogData).length === 0) {
           throw new Error("Blog not found");
         }
-
         setBlog(blogData);
 
-        // Fetch related blogs if category exists
         if (blogData.category) {
           const excludeId = blogData.id || blogData._id;
           const relatedResponse = await fetch(
@@ -77,19 +75,29 @@ const BlogDetails = () => {
   }
 
   return (
-    <>
+    <div className="blog-details-section">
+      {/* Shape Background */}
+      <div className="shape">
+        <img
+          src={fallbackShape}
+          alt="shape"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = fallbackShape;
+          }}
+        />
+      </div>
+
       {/* Navigation Header */}
-      <header className="blog-details-header">
-        <div className="container">
-          <Link to="/blogs" className="back-button">
-            ← Back to Blogs
-          </Link>
-          <h1>Blog Details</h1>
-        </div>
+      <header className="blog-details-header container">
+        <Link to="/blogs" className="back-button">
+          ← Back to Blogs
+        </Link>
+        <h1>Blog Details</h1>
       </header>
 
       {/* Featured Article */}
-      <section className="featured-article">
+      <section className="featured-article container">
         <div className="content">
           <span className="category">{blog.category}</span>
           <h1 className="headline">{blog.title}</h1>
@@ -104,7 +112,7 @@ const BlogDetails = () => {
       </section>
 
       {/* Blog Content */}
-      <section className="article-section">
+      <section className="article-section container">
         <div className="article-container">
           <h2>Insights and Strategies</h2>
           <p>
@@ -115,7 +123,7 @@ const BlogDetails = () => {
       </section>
 
       {/* Related Blogs */}
-      <section className="related-articles">
+      <section className="related-articles container">
         <h2>
           More related
           <br />
@@ -147,7 +155,7 @@ const BlogDetails = () => {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
