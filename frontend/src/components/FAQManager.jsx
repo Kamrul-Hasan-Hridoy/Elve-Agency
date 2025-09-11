@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import './FAQManager.css'; 
 
 const FAQManager = ({ setMessage }) => {
   const [faqs, setFaqs] = useState([]);
@@ -13,6 +14,11 @@ const FAQManager = ({ setMessage }) => {
     answer: "",
     open: false
   });
+  const [stats, setStats] = useState({
+    answered: 0,
+    pending: 0,
+    total: 0
+  });
 
   useEffect(() => {
     if (activeTab === "answered") {
@@ -21,6 +27,15 @@ const FAQManager = ({ setMessage }) => {
       fetchSubmittedQuestions();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    // Update stats whenever data changes
+    setStats({
+      answered: faqs.length,
+      pending: submittedQuestions.length,
+      total: faqs.length + submittedQuestions.length
+    });
+  }, [faqs, submittedQuestions]);
 
   const fetchFaqs = async () => {
     try {
@@ -144,152 +159,204 @@ const FAQManager = ({ setMessage }) => {
   };
 
   return (
-    <div>
-      <h2>FAQ Manager</h2>
+    <div className="faq-admin-container">
+      <div className="faq-admin-header">
+        <h1><i className="fas fa-question-circle"></i> FAQ Management</h1>
+      </div>
       
-      <div style={{ marginBottom: '20px' }}>
+      <div className="faq-stats-container">
+        <div className="faq-stat-card answered">
+          <div className="faq-stat-icon"><i className="fas fa-check-circle"></i></div>
+          <div className="faq-stat-value">{stats.answered}</div>
+          <div className="faq-stat-label">Answered Questions</div>
+        </div>
+        
+        <div className="faq-stat-card pending">
+          <div className="faq-stat-icon"><i className="fas fa-clock"></i></div>
+          <div className="faq-stat-value">{stats.pending}</div>
+          <div className="faq-stat-label">Pending Questions</div>
+        </div>
+        
+        <div className="faq-stat-card total">
+          <div className="faq-stat-icon"><i className="fas fa-question-circle"></i></div>
+          <div className="faq-stat-value">{stats.total}</div>
+          <div className="faq-stat-label">Total Questions</div>
+        </div>
+      </div>
+      
+      <div className="faq-tabs-container">
         <button 
-          onClick={() => setActiveTab("answered")} 
-          style={{ 
-            marginRight: '10px', 
-            backgroundColor: activeTab === "answered" ? '#007bff' : '#f8f9fa',
-            color: activeTab === "answered" ? 'white' : 'black'
-          }}
+          className={`faq-tab ${activeTab === "answered" ? "active" : ""}`}
+          onClick={() => setActiveTab("answered")}
         >
-          Answered FAQs
+          <i className="fas fa-list"></i> Answered FAQs
         </button>
         <button 
+          className={`faq-tab ${activeTab === "submitted" ? "active" : ""}`}
           onClick={() => setActiveTab("submitted")}
-          style={{ 
-            backgroundColor: activeTab === "submitted" ? '#007bff' : '#f8f9fa',
-            color: activeTab === "submitted" ? 'white' : 'black'
-          }}
         >
-          Submitted Questions
+          <i className="fas fa-clock"></i> Submitted Questions
         </button>
       </div>
       
-      {activeTab === "answered" && (
-        <>
-          <button 
-            onClick={() => setIsAdding(true)} 
-            className="add-btn"
-            style={{marginBottom: '20px'}}
-          >
-            Add New FAQ
-          </button>
+      <div className="faq-content-area">
+        {activeTab === "answered" && (
+          <>
+            <button 
+              onClick={() => setIsAdding(true)} 
+              className="faq-add-btn"
+            >
+              <i className="fas fa-plus-circle"></i> Add New FAQ
+            </button>
 
-          {(isAdding || editingFaq) && (
-            <div className="form-container" style={{marginBottom: '30px', padding: '20px', border: '1px solid #ccc', borderRadius: '5px'}}>
-              <h3>{editingFaq ? 'Edit' : 'Add'} FAQ</h3>
-              <form onSubmit={handleSubmit}>
-                <div style={{marginBottom: '10px'}}>
-                  <label>Question: </label>
-                  <input 
-                    type="text" 
-                    name="question" 
-                    value={formData.question} 
-                    onChange={handleChange} 
-                    required 
-                    style={{width: '100%'}}
-                  />
-                </div>
-                <div style={{marginBottom: '10px'}}>
-                  <label>Answer: </label>
-                  <textarea 
-                    name="answer" 
-                    value={formData.answer} 
-                    onChange={handleChange} 
-                    required 
-                    style={{width: '100%', minHeight: '100px'}}
-                  />
-                </div>
-                <div style={{marginBottom: '10px'}}>
-                  <label>
+            {(isAdding || editingFaq) && (
+              <div className="faq-form-container">
+                <h3><i className="fas fa-plus-circle"></i> {editingFaq ? 'Edit' : 'Add'} FAQ</h3>
+                <form onSubmit={handleSubmit} className="faq-form">
+                  <div className="form-group">
+                    <label>Question:</label>
                     <input 
-                      type="checkbox" 
-                      name="open" 
-                      checked={formData.open} 
+                      type="text" 
+                      name="question" 
+                      value={formData.question} 
                       onChange={handleChange} 
+                      required 
+                      placeholder="Enter the question"
                     />
-                    Open by default
-                  </label>
-                </div>
-                <button type="submit">Save</button>
-                <button type="button" onClick={resetForm} style={{marginLeft: '10px'}}>Cancel</button>
-              </form>
-            </div>
-          )}
-
-          <div className="faqs-list">
-            {faqs.map(faq => (
-              <div key={faq.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
-                <div style={{marginBottom: '10px'}}>
-                  <strong>Q: {faq.question}</strong>
-                </div>
-                <div style={{marginBottom: '10px'}}>
-                  <strong>A:</strong> {faq.answer}
-                </div>
-                <div>
-                  <span>Open by default: {faq.open ? 'Yes' : 'No'}</span>
-                </div>
-                <div style={{marginTop: '10px'}}>
-                  <button onClick={() => handleEdit(faq)} style={{marginRight: '10px'}}>Edit</button>
-                  <button onClick={() => handleDelete(faq.id)}>Delete</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      
-      {activeTab === "submitted" && (
-        <div className="submitted-questions">
-          <h3>Submitted Questions</h3>
-          {submittedQuestions.length === 0 ? (
-            <p>No submitted questions.</p>
-          ) : (
-            submittedQuestions.map(question => (
-              <div key={question.id} style={{marginBottom: "20px", padding: "15px", border: "1px solid #eee", borderRadius: "5px"}}>
-                <div style={{marginBottom: '10px'}}>
-                  <strong>Question: {question.question}</strong>
-                </div>
-                {question.email && (
-                  <div style={{marginBottom: '10px'}}>
-                    <strong>Email:</strong> {question.email}
                   </div>
-                )}
-                <div style={{marginBottom: '10px'}}>
-                  <strong>Submitted:</strong> {new Date(question.created_at).toLocaleString()}
-                </div>
-                
-                {answeringQuestion === question.id ? (
-                  <div>
-                    <textarea
-                      value={answerText}
-                      onChange={(e) => setAnswerText(e.target.value)}
-                      placeholder="Type your answer here..."
-                      style={{width: '100%', minHeight: '100px', marginBottom: '10px'}}
+                  <div className="form-group">
+                    <label>Answer:</label>
+                    <textarea 
+                      name="answer" 
+                      value={formData.answer} 
+                      onChange={handleChange} 
+                      required 
+                      placeholder="Enter the answer"
+                      rows="5"
                     />
-                    <div>
-                      <button onClick={() => handleAnswerSubmit(question.id)} style={{marginRight: '10px'}}>Submit Answer</button>
-                      <button onClick={() => {
-                        setAnsweringQuestion(null);
-                        setAnswerText("");
-                      }}>Cancel</button>
+                  </div>
+                  <div className="checkbox-group">
+                    <label>
+                      <input 
+                        type="checkbox" 
+                        name="open" 
+                        checked={formData.open} 
+                        onChange={handleChange} 
+                      />
+                      Open by default
+                    </label>
+                  </div>
+                  <div className="form-actions">
+                    <button type="submit" className="submit-btn">
+                      <i className="fas fa-save"></i> Save FAQ
+                    </button>
+                    <button type="button" onClick={resetForm} className="cancel-btn">
+                      <i className="fas fa-times"></i> Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="faq-list">
+              {faqs.length === 0 ? (
+                <div className="faq-empty-state">
+                  <i className="fas fa-inbox"></i>
+                  <h3>No FAQs Yet</h3>
+                  <p>Get started by adding your first frequently asked question.</p>
+                </div>
+              ) : (
+                faqs.map(faq => (
+                  <div key={faq.id} className="faq-item">
+                    <div className="faq-question">
+                      <i className="fas fa-question"></i> {faq.question}
+                    </div>
+                    <div className="faq-answer">{faq.answer}</div>
+                    <div className="faq-meta">
+                      <span>Status: {faq.open ? 'Open by default' : 'Closed by default'}</span>
+                      <div className="faq-actions">
+                        <button onClick={() => handleEdit(faq)} className="faq-btn edit">
+                          <i className="fas fa-edit"></i> Edit
+                        </button>
+                        <button onClick={() => handleDelete(faq.id)} className="faq-btn delete">
+                          <i className="fas fa-trash"></i> Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  <button onClick={() => {
-                    setAnsweringQuestion(question.id);
-                    setAnswerText("");
-                  }}>Answer This Question</button>
-                )}
+                ))
+              )}
+            </div>
+          </>
+        )}
+        
+        {activeTab === "submitted" && (
+          <div className="submitted-questions">
+            <h3><i className="fas fa-clock"></i> Submitted Questions</h3>
+            {submittedQuestions.length === 0 ? (
+              <div className="faq-empty-state">
+                <i className="fas fa-check-circle"></i>
+                <h3>No Pending Questions</h3>
+                <p>All submitted questions have been answered.</p>
               </div>
-            ))
-          )}
-        </div>
-      )}
+            ) : (
+              submittedQuestions.map(question => (
+                <div key={question.id} className="faq-item">
+                  <div className="faq-question">
+                    <i className="fas fa-question"></i> {question.question}
+                  </div>
+                  {question.email && (
+                    <div className="faq-answer">
+                      <strong>From:</strong> {question.email}
+                    </div>
+                  )}
+                  <div className="faq-meta">
+                    <span>Submitted: {new Date(question.created_at).toLocaleString()}</span>
+                    
+                    {answeringQuestion === question.id ? (
+                      <div className="answer-form">
+                        <textarea
+                          value={answerText}
+                          onChange={(e) => setAnswerText(e.target.value)}
+                          placeholder="Type your answer here..."
+                          rows="4"
+                        />
+                        <div className="answer-form-buttons">
+                          <button 
+                            onClick={() => handleAnswerSubmit(question.id)} 
+                            className="answer-form-btn submit"
+                          >
+                            <i className="fas fa-check"></i> Submit Answer
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setAnsweringQuestion(null);
+                              setAnswerText("");
+                            }}
+                            className="answer-form-btn cancel"
+                          >
+                            <i className="fas fa-times"></i> Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          setAnsweringQuestion(question.id);
+                          setAnswerText("");
+                        }}
+                        className="faq-btn edit"
+                      >
+                        <i className="fas fa-reply"></i> Answer
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
