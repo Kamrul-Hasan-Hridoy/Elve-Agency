@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import "./ClientManager.css";
 
 const ClientManager = ({ setMessage }) => {
   const [clients, setClients] = useState([]);
-  const [editingClient, setEditingClient] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     logo: "",
@@ -42,17 +43,23 @@ const ClientManager = ({ setMessage }) => {
   // Add / Update Client
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form
+    if (!formData.name.trim() || !formData.logo.trim()) {
+      setMessage({ text: "Please fill in all fields", type: "error" });
+      return;
+    }
+    
     setLoading(true);
 
     try {
       const token = localStorage.getItem("adminToken");
-      const clientId = editingClient ? (editingClient.id || editingClient._id) : null;
       
-      const url = clientId
-        ? `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001"}/api/admin/clients/${clientId}`
+      const url = editingId
+        ? `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001"}/api/admin/clients/${editingId}`
         : `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001"}/api/admin/clients`;
 
-      const method = clientId ? "PUT" : "POST";
+      const method = editingId ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -65,7 +72,7 @@ const ClientManager = ({ setMessage }) => {
 
       if (response.ok) {
         setMessage({
-          text: `Client ${editingClient ? "updated" : "added"} successfully`,
+          text: `Client ${editingId ? "updated" : "added"} successfully`,
           type: "success",
         });
         resetForm();
@@ -86,15 +93,14 @@ const ClientManager = ({ setMessage }) => {
   };
 
   // Delete Client
-  const handleDelete = async (client) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this client?")) return;
 
     try {
       const token = localStorage.getItem("adminToken");
-      const clientId = client.id || client._id;
       
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001"}/api/admin/clients/${clientId}`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5001"}/api/admin/clients/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -121,7 +127,7 @@ const ClientManager = ({ setMessage }) => {
 
   // Edit Client
   const handleEdit = (client) => {
-    setEditingClient(client);
+    setEditingId(client._id || client.id);
     setFormData({
       logo: client.logo || "",
       name: client.name || "",
@@ -131,7 +137,7 @@ const ClientManager = ({ setMessage }) => {
 
   // Reset Form
   const resetForm = () => {
-    setEditingClient(null);
+    setEditingId(null);
     setIsAdding(false);
     setFormData({
       logo: "",
@@ -155,16 +161,16 @@ const ClientManager = ({ setMessage }) => {
   };
 
   return (
-    <div className="admin-content-section">
+    <div className="client-manager">
       <div className="admin-page-header">
         <h2>Client Management</h2>
-        <p>Add, edit, or remove client logos from your website</p>
+        <p>   .   </p>
       </div>
 
       <button
         onClick={() => {
-          setIsAdding(true);
           resetForm();
+          setIsAdding(true);
         }}
         className="btn btn-primary"
         style={{ marginBottom: "20px" }}
@@ -174,10 +180,10 @@ const ClientManager = ({ setMessage }) => {
 
       {isAdding && (
         <div className="admin-content-card">
-          <h3 className="form-title">{editingClient ? "Edit Client" : "Add New Client"}</h3>
+          <h3 className="form-title">{editingId ? "Edit Client" : "Add New Client"}</h3>
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-group">
-              <label htmlFor="name">Client Name</label>
+              <label htmlFor="name">Client Name *</label>
               <input
                 type="text"
                 id="name"
@@ -190,7 +196,7 @@ const ClientManager = ({ setMessage }) => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="logo">Logo URL</label>
+              <label htmlFor="logo">Logo URL *</label>
               <div className="input-with-preview">
                 <input
                   type="text"
@@ -201,23 +207,22 @@ const ClientManager = ({ setMessage }) => {
                   required
                   placeholder="/images/client-logo.png"
                 />
-                {formData.logo && (
-                  <div className="image-preview">
-                    <img 
-                      src={buildImageUrl(formData.logo)} 
-                      alt="Preview" 
-                      onError={(e) => {
-                        e.target.src = '/images/placeholder.png';
-                      }}
-                    />
-                  </div>
-                )}
+                <div className="image-preview">
+                  <img 
+                    src={buildImageUrl(formData.logo)} 
+                    alt="Preview" 
+                    onError={(e) => {
+                      e.target.src = '/images/placeholder.png';
+                    }}
+                  />
+                </div>
               </div>
+              <p className="input-hint">Enter a relative path like "/images/logo.png" or a full URL</p>
             </div>
             
             <div className="form-actions">
               <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? "Saving..." : (editingClient ? "Update Client" : "Add Client")}
+                {loading ? "Saving..." : (editingId ? "Update Client" : "Add Client")}
               </button>
               <button
                 type="button"
@@ -234,7 +239,7 @@ const ClientManager = ({ setMessage }) => {
       <div className="admin-content-card">
         <div className="card-header">
           <h3>Existing Clients</h3>
-          <span className="items-count">{clients.length} clients</span>
+          <span className="items-count">{clients.length} {clients.length === 1 ? 'client' : 'clients'}</span>
         </div>
         
         {clients.length === 0 ? (
@@ -245,40 +250,37 @@ const ClientManager = ({ setMessage }) => {
           </div>
         ) : (
           <div className="clients-grid">
-            {clients.map((client) => {
-              const uniqueKey = client.id || client._id || `client-${client.name}`;
-              return (
-                <div key={uniqueKey} className="client-card">
-                  <div className="client-image-container">
-                    <img
-                      src={buildImageUrl(client.logo)}
-                      alt={client.name || `Client ${client.id}`}
-                      className="client-logo"
-                      onError={(e) => {
-                        e.target.src = '/images/placeholder.png';
-                      }}
-                    />
-                  </div>
-                  <div className="client-info">
-                    <h4 className="client-name">{client.name || `Client #${client.id}`}</h4>
-                  </div>
-                  <div className="client-actions">
-                    <button 
-                      onClick={() => handleEdit(client)}
-                      className="btn btn-sm btn-outline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(client)}
-                      className="btn btn-sm btn-outline btn-danger"
-                    >
-                      Delete
-                    </button>
-                  </div>
+            {clients.map((client) => (
+              <div key={client._id || client.id} className="client-card">
+                <div className="client-image-container">
+                  <img
+                    src={buildImageUrl(client.logo)}
+                    alt={client.name || `Client ${client._id || client.id}`}
+                    className="client-logo"
+                    onError={(e) => {
+                      e.target.src = '/images/placeholder.png';
+                    }}
+                  />
                 </div>
-              );
-            })}
+                <div className="client-info">
+                  <h4 className="client-name">{client.name || `Client #${client._id || client.id}`}</h4>
+                </div>
+                <div className="client-actions">
+                  <button 
+                    onClick={() => handleEdit(client)}
+                    className="btn btn-sm btn-outline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(client._id || client.id)}
+                    className="btn btn-sm btn-outline btn-danger"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
