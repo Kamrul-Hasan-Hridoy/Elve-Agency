@@ -6,10 +6,9 @@ const Navbar = () => {
     <header className="navbar-container">
       <nav className="navbar">
         <Link to='/' className="logo">
-          <span className="logo-icon">
-            <img src="/images/logo.png"className="logo-icon" />
-          </span>
-          <span className="logo-text">Elve Agency</span>
+          
+            <img src="/images/logo2.png" />
+         
         </Link>
         <ul className="nav-links">
           <li>
