@@ -17,6 +17,8 @@ const Pricing = () => {
     return `${import.meta.env.VITE_API_BASE_URL}${path}`;
   };
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   const toggleFaq = (id) => {
     setOpenFaqId(prev => (prev === id ? null : id));
   };
@@ -26,13 +28,8 @@ const Pricing = () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/submit-question`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: questionText,
-          email: questionEmail
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: questionText, email: questionEmail })
       });
 
       if (response.ok) {
@@ -54,13 +51,12 @@ const Pricing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [pricingRes, testimonialsRes, clientsRes, faqsRes] =
-          await Promise.all([
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/pricing`),
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/testimonials`),
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/clients`),
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/api/faqs`),
-          ]);
+        const [pricingRes, testimonialsRes, clientsRes, faqsRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/pricing`),
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/testimonials`),
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/clients`),
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/faqs`),
+        ]);
 
         const pricingData = await pricingRes.json();
         const testimonialsData = await testimonialsRes.json();
@@ -81,14 +77,21 @@ const Pricing = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <>
       {/* Pricing section starts */}
       <section className="pricing-section">
+        {/* Shape Image */}
+        <div className="shape">
+          <img
+            src={fallbackShape} // Replace with dynamic URL if needed
+            alt="shape"
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackShape; }}
+          />
+        </div>
+
         <h1 className="title">
           Flexible pricing <br />
           for every need
@@ -122,28 +125,24 @@ const Pricing = () => {
             <button className="price-btns">Book a call →</button>
             <button
               className="price-btns"
-              onClick={() => window.location.href = "/contact"} // Redirect to contact page
+              onClick={() => window.location.href = "/contact"}
             >
               Contact us →
             </button>
           </div>
         </div>
-
       </section>
       {/* Pricing section ends */}
 
       {/* Testimonial section starts */}
       <section className="testimonial-section">
         <div className="testimonial-content">
-          <h2>
-            Hear it from <br /> our clients
-          </h2>
+          <h2>Hear it from <br /> our clients</h2>
         </div>
         <div className="arrows">
           <button className="arrow-btn">&larr;</button>
           <button className="arrow-btn">&rarr;</button>
         </div>
-
         <div className="testimonial-container">
           {testimonials.map((testimonial) => (
             <div className="testimonial-card" key={testimonial.id}>
@@ -161,7 +160,7 @@ const Pricing = () => {
       </section>
       {/* Testimonial section ends */}
 
-      {/* Latest client section starts */}
+      {/* Clients section */}
       <section className="clients-section">
         <h2 className="clients-heading">Our latest Clients</h2>
         <div className="clients-grid">
@@ -172,9 +171,8 @@ const Pricing = () => {
           ))}
         </div>
       </section>
-      {/* Latest client section ends */}
 
-      {/* FAQ section starts */}
+      {/* FAQ section */}
       <div className="faq-section">
         <div className="faq-title">
           <h1>
@@ -194,7 +192,7 @@ const Pricing = () => {
               <div className="faq-answer">{faq.answer}</div>
             </div>
           ))}
-          
+
           {/* Question Submission Form */}
           <div className="question-submission">
             {!showQuestionForm ? (
@@ -232,7 +230,6 @@ const Pricing = () => {
           </div>
         </div>
       </div>
-      {/* FAQ section ends */}
     </>
   );
 };
