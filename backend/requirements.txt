@@ -9,4 +9,4 @@ Flask-JWT-Extended
 requests
 bcrypt  
 gunicorn==21.2.0 
-email-validator     
+email-validator
