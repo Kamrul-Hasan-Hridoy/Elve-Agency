@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './ServiceManager.css';
 
 const ServiceManager = ({ setMessage }) => {
   const [services, setServices] = useState([]);
@@ -160,6 +161,12 @@ const ServiceManager = ({ setMessage }) => {
             onChange={handleInputChange}
             placeholder="/images/icon.png"
           />
+          {formData.icon && (
+            <div className="image-preview">
+              <p>Icon Preview:</p>
+              <img src={formData.icon} alt="Icon preview" onError={(e) => e.target.style.display = 'none'} />
+            </div>
+          )}
         </div>
         
         <div className="form-group">
@@ -193,6 +200,12 @@ const ServiceManager = ({ setMessage }) => {
             onChange={handleInputChange}
             placeholder="/images/service-image.png"
           />
+          {formData.image && (
+            <div className="image-preview">
+              <p>Image Preview:</p>
+              <img src={formData.image} alt="Service preview" onError={(e) => e.target.style.display = 'none'} />
+            </div>
+          )}
         </div>
         
         <div className="form-actions">
@@ -215,8 +228,30 @@ const ServiceManager = ({ setMessage }) => {
           <div className="items-grid">
             {services.map(service => (
               <div key={service.id} className="item-card">
+                <div className="service-image-container">
+                  {service.image ? (
+                    <img src={service.image} alt={service.title} className="service-image" />
+                  ) : (
+                    <div className="image-placeholder">No Image</div>
+                  )}
+                </div>
+                <div className="service-icon">
+                  {service.icon && (
+                    <img src={service.icon} alt={`${service.title} `} />
+                  )}
+                </div>
                 <h4>{service.title}</h4>
-                <p>{service.desc}</p>
+                <p className="service-desc">{service.desc}</p>
+                {service.list && service.list.length > 0 && (
+                  <div className="service-features">
+                    <h5>Features:</h5>
+                    <ul>
+                      {service.list.map((feature, index) => (
+                        <li key={index}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="item-actions">
                   <button onClick={() => handleEdit(service)}>Edit</button>
                   <button onClick={() => handleDelete(service.id)} className="delete-btn">Delete</button>
