@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './AdminLogin.css';
 
 const AdminLogin = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -37,34 +38,65 @@ const AdminLogin = ({ onLogin }) => {
 
   return (
     <div className="admin-login-container">
-      <div className="admin-login-form">
-        <h2>Elve Agency Admin Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username:</label>
+      <div className="login-background">
+        <div className="shape shape-1"></div>
+        <div className="shape shape-2"></div>
+        <div className="shape shape-3"></div>
+        <div className="shape shape-4"></div>
+      </div>
+      
+      <div className="admin-login-card">
+        <div className="login-header">
+          <div className="logo-container">
+            <div className="logo-icon">⚡</div>
+            <h1>Elve Agency</h1>
+          </div>
+          <h2>Admin Portal</h2>
+          <p>Access your dashboard to manage content</p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="input-group">
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               disabled={loading}
+              className="login-input"
             />
+            <label className="input-label">Username</label>
+            <span className="input-highlight"></span>
           </div>
-          <div className="form-group">
-            <label>Password:</label>
+          
+          <div className="input-group">
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
+              className="login-input"
             />
+            <label className="input-label">Password</label>
+            <span className="input-highlight"></span>
           </div>
+          
           {error && <div className="error-message">{error}</div>}
+          
           <button type="submit" disabled={loading} className="login-btn">
-            {loading ? 'Logging in...' : 'Login'}
+            <span className="btn-text">{loading ? 'Logging in...' : 'Login'}</span>
+            <div className="btn-loader">
+              <div className="loader-dot"></div>
+              <div className="loader-dot"></div>
+              <div className="loader-dot"></div>
+            </div>
           </button>
         </form>
+        
+        <div className="login-footer">
+          <p>Secure admin access only</p>
+        </div>
       </div>
     </div>
   );
