@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './AboutManager.css';
 
 const AboutManager = ({ setMessage }) => {
   const [aboutData, setAboutData] = useState({
@@ -127,14 +128,14 @@ const AboutManager = ({ setMessage }) => {
   }
 
   return (
-    <div className="admin-content-section">
-      <h2>Manage About Page</h2>
+    <div className="about-manager">
+      <h2 className="section-title">Manage About Page</h2>
       
       <div className="section-tabs">
-        {['learnContainer', 'storySection', 'coreValues', 'team', 'awards'].map(section => (
+        {['learnContainer',  'coreValues', 'team', 'awards'].map(section => ( /* 'storySection, '  */
           <button
             key={section}
-            className={activeSection === section ? 'active' : ''}
+            className={`tab-btn ${activeSection === section ? 'active' : ''}`}
             onClick={() => setActiveSection(section)}
           >
             {section.replace(/([A-Z])/g, ' $1').trim()}
@@ -152,7 +153,7 @@ const AboutManager = ({ setMessage }) => {
           />
         )}
         
-        {activeSection === 'storySection' && (
+        {/* {activeSection === 'storySection' && (
           <StorySection 
             data={aboutData.storySection} 
             onChange={handleInputChange}
@@ -161,7 +162,7 @@ const AboutManager = ({ setMessage }) => {
             onSave={() => handleSectionUpdate('storySection', aboutData.storySection)}
             saving={saving}
           />
-        )}
+        )} */}
         
         {activeSection === 'coreValues' && (
           <CoreValuesSection 
@@ -200,130 +201,150 @@ const AboutManager = ({ setMessage }) => {
   );
 };
 
-// Sub-components for each section (remove FaqsSection)
+// Sub-components for each section
 const LearnContainerSection = ({ data, onChange, onSave, saving }) => (
   <div className="form-section">
-    <h3>Learn Container</h3>
+    <h3 className="form-title">Learn Container</h3>
     <div className="form-group">
-      <label>Heading:</label>
+      <label>Heading</label>
       <textarea
         value={data.heading}
         onChange={(e) => onChange('learnContainer', 'heading', e.target.value)}
         rows="3"
+        className="form-textarea"
       />
     </div>
     <div className="form-group">
-      <label>Video Image Path:</label>
+      <label>Video Image Path</label>
       <input
         type="text"
         value={data.videoImage}
         onChange={(e) => onChange('learnContainer', 'videoImage', e.target.value)}
+        className="form-input"
       />
     </div>
-    <button onClick={onSave} disabled={saving} className="save-btn">
+    <button onClick={onSave} disabled={saving} className="btn btn-primary">
       {saving ? 'Saving...' : 'Save Learn Container'}
     </button>
   </div>
 );
 
-const StorySection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
-  <div className="form-section">
-    <h3>Story Section</h3>
-    <div className="form-group">
-      <label>Main Heading:</label>
-      <textarea
-        value={data.mainHeading}
-        onChange={(e) => onChange('storySection', 'mainHeading', e.target.value)}
-        rows="3"
-      />
-    </div>
+// const StorySection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
+//   <div className="form-section">
+//     <h3 className="form-title">Story Section</h3>
+//     <div className="form-group">
+//       <label>Main Heading</label>
+//       <textarea
+//         value={data.mainHeading}
+//         onChange={(e) => onChange('storySection', 'mainHeading', e.target.value)}
+//         rows="3"
+//         className="form-textarea"
+//       />
+//     </div>
     
-    <h4>Paragraphs:</h4>
-    {data.paragraphs.map((paragraph, index) => (
-      <div key={index} className="form-group array-item">
-        <label>Paragraph {index + 1}:</label>
-        <textarea
-          value={paragraph}
-          onChange={(e) => onChange('storySection', 'paragraphs', e.target.value, index)}
-          rows="3"
-        />
-        <button onClick={() => onRemove('storySection.paragraphs', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
-    <button onClick={() => onAdd('storySection.paragraphs', 'New paragraph')} className="add-btn">
-      Add Paragraph
-    </button>
+//     <div className="array-section">
+//       <h4 className="array-title">Paragraphs</h4>
+//       {data.paragraphs.map((paragraph, index) => (
+//         <div key={index} className="array-item">
+//           <div className="form-group">
+//             <label>Paragraph {index + 1}</label>
+//             <textarea
+//               value={paragraph}
+//               onChange={(e) => onChange('storySection', 'paragraphs', e.target.value, index)}
+//               rows="3"
+//               className="form-textarea"
+//             />
+//           </div>
+//           <button onClick={() => onRemove('storySection.paragraphs', index)} className="btn btn-danger btn-sm">
+//             Remove
+//           </button>
+//         </div>
+//       ))}
+//       <button onClick={() => onAdd('storySection.paragraphs', 'New paragraph')} className="btn btn-outline">
+//         Add Paragraph
+//       </button>
+//     </div>
     
-    <h4>Images:</h4>
-    {data.images.map((image, index) => (
-      <div key={index} className="form-group array-item">
-        <label>Image {index + 1} Path:</label>
-        <input
-          type="text"
-          value={image}
-          onChange={(e) => onChange('storySection', 'images', e.target.value, index)}
-        />
-        <button onClick={() => onRemove('storySection.images', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
-    <button onClick={() => onAdd('storySection.images', '/images/new-image.png')} className="add-btn">
-      Add Image
-    </button>
+//     <div className="array-section">
+//       <h4 className="array-title">Images</h4>
+//       {data.images.map((image, index) => (
+//         <div key={index} className="array-item">
+//           <div className="form-group">
+//             <label>Image {index + 1} Path</label>
+//             <input
+//               type="text"
+//               value={image}
+//               onChange={(e) => onChange('storySection', 'images', e.target.value, index)}
+//               className="form-input"
+//             />
+//           </div>
+//           <button onClick={() => onRemove('storySection.images', index)} className="btn btn-danger btn-sm">
+//             Remove
+//           </button>
+//         </div>
+//       ))}
+//       <button onClick={() => onAdd('storySection.images', '/images/new-image.png')} className="btn btn-outline">
+//         Add Image
+//       </button>
+//     </div>
     
-    <button onClick={onSave} disabled={saving} className="save-btn">
-      {saving ? 'Saving...' : 'Save Story Section'}
-    </button>
-  </div>
-);
+//     <button onClick={onSave} disabled={saving} className="btn btn-primary">
+//       {saving ? 'Saving...' : 'Save Story Section'}
+//     </button>
+//   </div>
+// );
 
 const CoreValuesSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
   <div className="form-section">
-    <h3>Core Values</h3>
-    {data.map((value, index) => (
-      <div key={index} className="array-item card">
-        <h4>Core Value {index + 1}</h4>
-        <div className="form-group">
-          <label>Icon Path:</label>
-          <input
-            type="text"
-            value={value.icon}
-            onChange={(e) => onChange('coreValues', null, e.target.value, index, 'icon')}
-          />
+    <h3 className="form-title">Core Values</h3>
+    <div className="values-grid">
+      {data.map((value, index) => (
+        <div key={index} className="array-item card">
+          <div className="card-header">
+            <h4>Core Value {index + 1}</h4>
+            <button onClick={() => onRemove('coreValues', index)} className="btn btn-danger btn-sm">
+              Remove
+            </button>
+          </div>
+          <div className="form-group">
+            <label>Icon Path</label>
+            <input
+              type="text"
+              value={value.icon}
+              onChange={(e) => onChange('coreValues', null, e.target.value, index, 'icon')}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              value={value.title}
+              onChange={(e) => onChange('coreValues', null, e.target.value, index, 'title')}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Description</label>
+            <textarea
+              value={value.description}
+              onChange={(e) => onChange('coreValues', null, e.target.value, index, 'description')}
+              rows="3"
+              className="form-textarea"
+            />
+          </div>
         </div>
-        <div className="form-group">
-          <label>Title:</label>
-          <input
-            type="text"
-            value={value.title}
-            onChange={(e) => onChange('coreValues', null, e.target.value, index, 'title')}
-          />
-        </div>
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            value={value.description}
-            onChange={(e) => onChange('coreValues', null, e.target.value, index, 'description')}
-            rows="3"
-          />
-        </div>
-        <button onClick={() => onRemove('coreValues', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
+      ))}
+    </div>
     <button onClick={() => onAdd('coreValues', {
       icon: '/images/icon.png',
       title: 'New Value',
       description: 'Value description'
-    })} className="add-btn">
+    })} className="btn btn-outline">
       Add Core Value
     </button>
     
-    <button onClick={onSave} disabled={saving} className="save-btn">
+    <button onClick={onSave} disabled={saving} className="btn btn-primary">
       {saving ? 'Saving...' : 'Save Core Values'}
     </button>
   </div>
@@ -331,48 +352,55 @@ const CoreValuesSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) 
 
 const TeamSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
   <div className="form-section">
-    <h3>Team Members</h3>
-    {data.map((member, index) => (
-      <div key={index} className="array-item card">
-        <h4>Team Member {index + 1}</h4>
-        <div className="form-group">
-          <label>Image Path:</label>
-          <input
-            type="text"
-            value={member.image}
-            onChange={(e) => onChange('team', null, e.target.value, index, 'image')}
-          />
+    <h3 className="form-title">Team Members</h3>
+    <div className="team-grid">
+      {data.map((member, index) => (
+        <div key={index} className="array-item card">
+          <div className="card-header">
+            <h4>Team Member {index + 1}</h4>
+            <button onClick={() => onRemove('team', index)} className="btn btn-danger btn-sm">
+              Remove
+            </button>
+          </div>
+          <div className="form-group">
+            <label>Image Path</label>
+            <input
+              type="text"
+              value={member.image}
+              onChange={(e) => onChange('team', null, e.target.value, index, 'image')}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              value={member.name}
+              onChange={(e) => onChange('team', null, e.target.value, index, 'name')}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Role</label>
+            <input
+              type="text"
+              value={member.role}
+              onChange={(e) => onChange('team', null, e.target.value, index, 'role')}
+              className="form-input"
+            />
+          </div>
         </div>
-        <div className="form-group">
-          <label>Name:</label>
-          <input
-            type="text"
-            value={member.name}
-            onChange={(e) => onChange('team', null, e.target.value, index, 'name')}
-          />
-        </div>
-        <div className="form-group">
-          <label>Role:</label>
-          <input
-            type="text"
-            value={member.role}
-            onChange={(e) => onChange('team', null, e.target.value, index, 'role')}
-          />
-        </div>
-        <button onClick={() => onRemove('team', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
+      ))}
+    </div>
     <button onClick={() => onAdd('team', {
       image: '/images/team-member.png',
       name: 'New Member',
       role: 'Team Role'
-    })} className="add-btn">
+    })} className="btn btn-outline">
       Add Team Member
     </button>
     
-    <button onClick={onSave} disabled={saving} className="save-btn">
+    <button onClick={onSave} disabled={saving} className="btn btn-primary">
       {saving ? 'Saving...' : 'Save Team'}
     </button>
   </div>
@@ -380,39 +408,45 @@ const TeamSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
 
 const AwardsSection = ({ data, onChange, onAdd, onRemove, onSave, saving }) => (
   <div className="form-section">
-    <h3>Awards</h3>
-    {data.map((award, index) => (
-      <div key={index} className="array-item card">
-        <h4>Award {index + 1}</h4>
-        <div className="form-group">
-          <label>Image Path:</label>
-          <input
-            type="text"
-            value={award.image}
-            onChange={(e) => onChange('awards', null, e.target.value, index, 'image')}
-          />
+    <h3 className="form-title">Awards</h3>
+    <div className="awards-grid">
+      {data.map((award, index) => (
+        <div key={index} className="array-item card">
+          <div className="card-header">
+            <h4>Award {index + 1}</h4>
+            <button onClick={() => onRemove('awards', index)} className="btn btn-danger btn-sm">
+              Remove
+            </button>
+          </div>
+          <div className="form-group">
+            <label>Image Path</label>
+            <input
+              type="text"
+              value={award.image}
+              onChange={(e) => onChange('awards', null, e.target.value, index, 'image')}
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              value={award.title}
+              onChange={(e) => onChange('awards', null, e.target.value, index, 'title')}
+              className="form-input"
+            />
+          </div>
         </div>
-        <div className="form-group">
-          <label>Title:</label>
-          <input
-            type="text"
-            value={award.title}
-            onChange={(e) => onChange('awards', null, e.target.value, index, 'title')}
-          />
-        </div>
-        <button onClick={() => onRemove('awards', index)} className="remove-btn">
-          Remove
-        </button>
-      </div>
-    ))}
+      ))}
+    </div>
     <button onClick={() => onAdd('awards', {
       image: '/images/award.png',
       title: 'Award Title'
-    })} className="add-btn">
+    })} className="btn btn-outline">
       Add Award
     </button>
     
-    <button onClick={onSave} disabled={saving} className="save-btn">
+    <button onClick={onSave} disabled={saving} className="btn btn-primary">
       {saving ? 'Saving...' : 'Save Awards'}
     </button>
   </div>
