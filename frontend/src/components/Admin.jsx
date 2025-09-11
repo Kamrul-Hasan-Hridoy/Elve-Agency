@@ -14,9 +14,11 @@ import './Admin.css';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('home'); // Set home as default
+  const [activeTab, setActiveTab] = useState('home');
   const [message, setMessage] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -25,6 +27,19 @@ const Admin = () => {
       verifyToken(token);
       fetchUnreadCount();
     }
+
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Function to fetch unread message count
@@ -88,126 +103,128 @@ const Admin = () => {
     setUnreadCount(count);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   if (!isAuthenticated) {
     return <AdminLogin onLogin={handleLogin} />;
   }
 
+  const tabs = [
+    { id: 'home', label: 'Home Page', icon: '🏠' },
+    { id: 'services', label: 'Services', icon: '🛠️' },
+    { id: 'testimonials', label: 'Testimonials', icon: '💬' },
+    { id: 'clients', label: 'Clients', icon: '🏢' },
+    { id: 'faqs', label: 'FAQs', icon: '❓' },
+    { id: 'pricing', label: 'Pricing', icon: '💰' },
+    { id: 'blogs', label: 'Blogs', icon: '📝' },
+    { id: 'about', label: 'About Page', icon: 'ℹ️' },
+    { id: 'projects', label: 'Projects', icon: '🚀' },
+    { id: 'contact', label: 'Messages', icon: '📨', badge: unreadCount }
+  ];
+
   return (
-    <div className="admin-container">
+    <div className="admin-app">
       <header className="admin-header">
-        <h1>Elve Agency Admin Panel</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        <div className="header-left">
+          <button 
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+          >
+            {sidebarOpen ? '✕' : '☰'}
+          </button>
+          <h1>Elve Agency Dashboard</h1>
+        </div>
+        <div className="header-right">
+          <div className="user-info">
+            <span className="welcome-text">Welcome, Admin</span>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
+          </div>
+        </div>
       </header>
 
-      <div className="admin-tabs">
-        <button
-          className={activeTab === 'home' ? 'active' : ''}
-          onClick={() => setActiveTab('home')}
-        >
-          Home Page
-        </button>
-        <button
-          className={activeTab === 'services' ? 'active' : ''}
-          onClick={() => setActiveTab('services')}
-        >
-          Services
-        </button>
-        <button
-          className={activeTab === 'testimonials' ? 'active' : ''}
-          onClick={() => setActiveTab('testimonials')}
-        >
-          Testimonials
-        </button>
-        <button
-          className={activeTab === 'clients' ? 'active' : ''}
-          onClick={() => setActiveTab('clients')}
-        >
-          Clients
-        </button>
-        <button
-          className={activeTab === 'faqs' ? 'active' : ''}
-          onClick={() => setActiveTab('faqs')}
-        >
-          FAQs
-        </button>
-        <button
-          className={activeTab === 'pricing' ? 'active' : ''}
-          onClick={() => setActiveTab('pricing')}
-        >
-          Pricing
-        </button>
-        <button
-          className={activeTab === 'blogs' ? 'active' : ''}
-          onClick={() => setActiveTab('blogs')}
-        >
-          Blogs
-        </button>
-        <button
-          className={activeTab === 'about' ? 'active' : ''}
-          onClick={() => setActiveTab('about')}
-        >
-          About Page
-        </button>
-        <button
-          className={activeTab === 'projects' ? 'active' : ''}
-          onClick={() => setActiveTab('projects')}
-        >
-          Projects
-        </button>
-        <button
-          className={activeTab === 'contact' ? 'active' : ''}
-          onClick={() => setActiveTab('contact')}
-        >
-          Contact Messages
-          {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
-        </button>
-      </div>
+      <div className="admin-container">
+        <aside className={`admin-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+          <div className="sidebar-header">
+            <h2>Menu</h2>
+          </div>
+          <nav className="sidebar-nav">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  if (isMobile) setSidebarOpen(false);
+                }}
+              >
+                <span className="nav-icon">{tab.icon}</span>
+                <span className="nav-label">{tab.label}</span>
+                {tab.badge > 0 && (
+                  <span className="nav-badge">{tab.badge}</span>
+                )}
+              </button>
+            ))}
+          </nav>
+          <div className="sidebar-footer">
+            <div className="status-indicator">
+              <div className="status-dot"></div>
+              <span>System Online</span>
+            </div>
+          </div>
+        </aside>
 
-      {message && (
-        <div className={`admin-message ${message.type || 'info'}`}>
-          {message.text}
-          <button onClick={() => setMessage(null)} className="close-btn">
-            ×
-          </button>
-        </div>
-      )}
+        <main className="admin-main">
+          {message && (
+            <div className={`admin-message ${message.type || 'info'}`}>
+              <div className="message-content">
+                <span className="message-text">{message.text}</span>
+                <button onClick={() => setMessage(null)} className="message-close">
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
 
-      <div className="admin-content">
-        {activeTab === 'home' && (
-          <HomeManager setMessage={setMessage} />
-        )}
-        {activeTab === 'services' && (
-          <ServiceManager setMessage={setMessage} />
-        )}
-        {activeTab === 'testimonials' && (
-          <TestimonialManager setMessage={setMessage} />
-        )}
-        {activeTab === 'clients' && (
-          <ClientManager setMessage={setMessage} />
-        )}
-        {activeTab === 'faqs' && (
-          <FAQManager setMessage={setMessage} />
-        )}
-        {activeTab === 'pricing' && (
-          <PricingManager setMessage={setMessage} />
-        )}
-        {activeTab === 'blogs' && (
-          <BlogManager setMessage={setMessage} />
-        )}
-        {activeTab === 'about' && (
-          <AboutManager setMessage={setMessage} />
-        )}
-        {activeTab === 'projects' && (
-          <ProjectManager setMessage={setMessage} />
-        )}
-        {activeTab === 'contact' && (
-          <ContactManager 
-            setMessage={setMessage} 
-            updateUnreadCount={updateUnreadCount}
-          />
-        )}
+          <div className="admin-content">
+            {activeTab === 'home' && (
+              <HomeManager setMessage={setMessage} />
+            )}
+            {activeTab === 'services' && (
+              <ServiceManager setMessage={setMessage} />
+            )}
+            {activeTab === 'testimonials' && (
+              <TestimonialManager setMessage={setMessage} />
+            )}
+            {activeTab === 'clients' && (
+              <ClientManager setMessage={setMessage} />
+            )}
+            {activeTab === 'faqs' && (
+              <FAQManager setMessage={setMessage} />
+            )}
+            {activeTab === 'pricing' && (
+              <PricingManager setMessage={setMessage} />
+            )}
+            {activeTab === 'blogs' && (
+              <BlogManager setMessage={setMessage} />
+            )}
+            {activeTab === 'about' && (
+              <AboutManager setMessage={setMessage} />
+            )}
+            {activeTab === 'projects' && (
+              <ProjectManager setMessage={setMessage} />
+            )}
+            {activeTab === 'contact' && (
+              <ContactManager 
+                setMessage={setMessage} 
+                updateUnreadCount={updateUnreadCount}
+              />
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
