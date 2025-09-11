@@ -127,29 +127,37 @@ const About = () => {
   return (
     <>
       {/* Learn Section */}
-      <div className="learn-container">
-        <div className="learn-heading">
-          <h1>
-            {aboutData.learnContainer.heading.split("\n").map((line, i) => (
-              <React.Fragment key={i}>
-                {line}
-                {i <
-                  aboutData.learnContainer.heading.split("\n").length - 1 && (
-                  <br />
-                )}
-              </React.Fragment>
-            ))}
-          </h1>
-        </div>
-        <div className="video-section">
-          <div className="video-wrapper">
-            <img
-              src={getImageUrl(aboutData.learnContainer.videoImage)}
-              alt="About Us Video"
-            />
-          </div>
-        </div>
-      </div>
+<div className="learn-container">
+  <div className="shape">
+   <img
+  src={getImageUrl(aboutData.learnContainer?.shapeImage || "shape.png")}
+  alt="shape"
+  onError={(e) => {
+    e.target.src = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+  }}
+/>
+
+  </div>
+  <div className="learn-heading">
+    <h1>
+      {aboutData.learnContainer.heading.split("\n").map((line, i) => (
+        <React.Fragment key={i}>
+          {line}
+          {i < aboutData.learnContainer.heading.split("\n").length - 1 && <br />}
+        </React.Fragment>
+      ))}
+    </h1>
+  </div>
+  <div className="video-section">
+    <div className="video-wrapper">
+      <img
+        src={getImageUrl(aboutData.learnContainer.videoImage)}
+        alt="About Us Video"
+      />
+    </div>
+  </div>
+</div>
+
 
       {/* Story Section */}
       <section className="story-section">
