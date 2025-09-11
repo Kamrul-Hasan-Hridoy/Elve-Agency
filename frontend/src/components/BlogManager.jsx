@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import './BlogManager.css';
 
 const BlogDetailsManager = ({ setMessage }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -46,6 +48,42 @@ const BlogDetailsManager = ({ setMessage }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle image upload
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const token = localStorage.getItem('adminToken');
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/upload`,
+        {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: uploadData
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        // backend should return { imageUrl: "http://.../uploads/filename.jpg" }
+        setFormData(prev => ({ ...prev, image: data.imageUrl }));
+        setMessage({ text: 'Image uploaded successfully!', type: 'success' });
+      } else {
+        setMessage({ text: 'Error uploading image', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Upload Error:', error);
+      setMessage({ text: 'Error uploading image', type: 'error' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   // Add / Update blog
@@ -95,7 +133,7 @@ const BlogDetailsManager = ({ setMessage }) => {
       image: blog.image || '',
       date: blog.date || '',
       read_time: blog.read_time || '',
-      content: blog.content || ''   // ✅ Prevent undefined crash
+      content: blog.content || ''
     });
   };
 
@@ -131,62 +169,157 @@ const BlogDetailsManager = ({ setMessage }) => {
   if (loading) return <div className="admin-loading">Loading Blogs...</div>;
 
   return (
-    <div className="admin-content-section">
-      <h2>Manage Blog Details</h2>
+    <div className="blog-manager">
+      <h2 className="section-title">Manage Blog Details</h2>
 
       {/* Form */}
-      <div className="admin-form">
-        <h3>{editingBlog ? 'Edit Blog Details' : 'Add New Blog Details'}</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Title:</label>
-            <input type="text" name="title" value={formData.title} onChange={handleInputChange} required />
+      <div className="form-section">
+        <h3 className="form-title">{editingBlog ? 'Edit Blog Details' : 'Add New Blog Details'}</h3>
+        <form onSubmit={handleSubmit} className="blog-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label>Title</label>
+              <input 
+                type="text" 
+                name="title" 
+                value={formData.title} 
+                onChange={handleInputChange} 
+                required 
+                className="form-input"
+              />
+            </div>
+            <div className="form-group">
+              <label>Category</label>
+              <input 
+                type="text" 
+                name="category" 
+                value={formData.category} 
+                onChange={handleInputChange} 
+                required 
+                className="form-input"
+              />
+            </div>
           </div>
+          
           <div className="form-group">
-            <label>Category:</label>
-            <input type="text" name="category" value={formData.category} onChange={handleInputChange} required />
+            <label>Description</label>
+            <textarea 
+              name="description" 
+              value={formData.description} 
+              onChange={handleInputChange} 
+              rows="3" 
+              required 
+              className="form-textarea"
+            />
           </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Image Path</label>
+              <input 
+                type="text" 
+                name="image" 
+                value={formData.image} 
+                onChange={handleInputChange} 
+                required 
+                className="form-input"
+              />
+
+              {/* Upload Button */}
+              <div className="upload-box">
+                <label className="upload-label">
+                  <span className="upload-btn">📤 Upload</span>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
+                </label>
+                {uploading && <span className="uploading-text">Uploading...</span>}
+              </div>
+
+              {formData.image && (
+                <div className="image-preview">
+                  <img src={formData.image} alt="Preview" onError={(e) => e.target.style.display = 'none'} />
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label>Date</label>
+              <input 
+                type="text" 
+                name="date" 
+                value={formData.date} 
+                onChange={handleInputChange} 
+                required 
+                className="form-input"
+                placeholder="e.g. September 9, 2023"
+              />
+            </div>
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Read Time</label>
+              <input 
+                type="text" 
+                name="read_time" 
+                value={formData.read_time} 
+                onChange={handleInputChange} 
+                className="form-input"
+                placeholder="e.g. 5 min read"
+              />
+            </div>
+          </div>
+          
           <div className="form-group">
-            <label>Description:</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} rows="3" required />
+            <label>Full Content</label>
+            <textarea 
+              name="content" 
+              value={formData.content} 
+              onChange={handleInputChange} 
+              rows="6" 
+              className="form-textarea"
+            />
           </div>
-          <div className="form-group">
-            <label>Image Path:</label>
-            <input type="text" name="image" value={formData.image} onChange={handleInputChange} required />
-          </div>
-          <div className="form-group">
-            <label>Date:</label>
-            <input type="text" name="date" value={formData.date} onChange={handleInputChange} required />
-          </div>
-          <div className="form-group">
-            <label>Read Time:</label>
-            <input type="text" name="read_time" value={formData.read_time} onChange={handleInputChange} />
-          </div>
-          <div className="form-group">
-            <label>Full Content:</label>
-            <textarea name="content" value={formData.content} onChange={handleInputChange} rows="6" />
-          </div>
+          
           <div className="form-actions">
-            <button type="submit" disabled={saving}>{saving ? 'Saving...' : editingBlog ? 'Update Blog' : 'Add Blog'}</button>
-            {editingBlog && <button type="button" onClick={cancelEdit} className="remove-btn">Cancel</button>}
+            <button type="submit" disabled={saving} className="btn btn-primary">
+              {saving ? 'Saving...' : editingBlog ? 'Update Blog' : 'Add Blog'}
+            </button>
+            {editingBlog && (
+              <button type="button" onClick={cancelEdit} className="btn btn-secondary">
+                Cancel
+              </button>
+            )}
           </div>
         </form>
       </div>
 
       {/* Blog List */}
-      <div className="admin-list">
-        <h3>Blog Details List</h3>
-        <div className="items-grid">
+      <div className="blog-list-section">
+        <h3 className="section-subtitle">Blog Details List</h3>
+        <div className="blog-grid">
           {blogs.map(blog => (
-            <div key={blog.id} className="item-card">
-              <div className="item-header">
-                <h4>{blog.title}</h4>
-                <span className="badge">{blog.category}</span>
+            <div key={blog.id} className="blog-card">
+              <div className="card-image">
+                {blog.image && (
+                  <img src={blog.image} alt={blog.title} onError={(e) => e.target.style.display = 'none'} />
+                )}
               </div>
-              <p>{blog.description ? blog.description.substring(0, 100) : ''}...</p> {/* ✅ Safe substring */}
-              <div className="item-actions">
-                <button onClick={() => handleEdit(blog)}>Edit</button>
-                <button onClick={() => handleDelete(blog.id)} className="delete-btn">Delete</button>
+              <div className="card-content">
+                <div className="card-header">
+                  <h4 className="blog-title">{blog.title}</h4>
+                  <span className="blog-category">{blog.category}</span>
+                </div>
+                <p className="blog-description">
+                  {blog.description ? blog.description.substring(0, 100) : ''}...
+                </p>
+                <div className="blog-meta">
+                  <span className="blog-date">{blog.date}</span>
+                  {blog.read_time && <span className="blog-read-time">{blog.read_time}</span>}
+                </div>
+                <div className="card-actions">
+                  <button onClick={() => handleEdit(blog)} className="btn btn-outline">Edit</button>
+                  <button onClick={() => handleDelete(blog.id)} className="btn btn-danger">Delete</button>
+                </div>
               </div>
             </div>
           ))}
