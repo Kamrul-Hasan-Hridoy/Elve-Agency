@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './PricingManager.css';
 
 const PricingManager = ({ setMessage }) => {
   const [pricingPlans, setPricingPlans] = useState([]);
@@ -141,117 +142,126 @@ const PricingManager = ({ setMessage }) => {
   };
 
   return (
-    <div className="admin-content-section">
-      <h2>Manage Pricing Plans</h2>
+    <div className="pricing-manager">
+      <h2 className="section-title">Manage Pricing Plans</h2>
       
-      <form onSubmit={handleSubmit} className="admin-form">
-        <div className="form-group">
-          <label>Plan Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Badge Text:</label>
-          <input
-            type="text"
-            name="badge"
-            value={formData.badge}
-            onChange={handleInputChange}
-            placeholder="Popular, Recommended, etc."
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-            rows="3"
-          />
-        </div>
-        
-        <div className="form-row">
+      <div className="form-section">
+        <h3 className="form-title">{editingId ? 'Edit Pricing Plan' : 'Add New Pricing Plan'}</h3>
+        <form onSubmit={handleSubmit} className="pricing-form">
           <div className="form-group">
-            <label>Price:</label>
+            <label>Plan Name</label>
             <input
               type="text"
-              name="price"
-              value={formData.price}
+              name="name"
+              value={formData.name}
               onChange={handleInputChange}
               required
-              placeholder="$99"
+              className="form-input"
             />
           </div>
           
           <div className="form-group">
-            <label>Price Period:</label>
-            <select
-              name="price_period"
-              value={formData.price_period}
+            <label>Badge Text <span className="optional">(optional)</span></label>
+            <input
+              type="text"
+              name="badge"
+              value={formData.badge}
               onChange={handleInputChange}
-            >
-              <option value="/month">/month</option>
-              <option value="/year">/year</option>
-              <option value="one-time">one-time</option>
-            </select>
+              placeholder="Popular, Recommended, etc."
+              className="form-input"
+            />
           </div>
-        </div>
-        
-        <div className="form-group">
-          <label>Features (one per line):</label>
-          <textarea
-            name="features"
-            value={formData.features}
-            onChange={handleInputChange}
-            rows="6"
-            placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-            required
-          />
-        </div>
-        
-        <div className="form-actions">
-          <button type="submit" disabled={loading}>
-            {loading ? 'Saving...' : (editingId ? 'Update Plan' : 'Add Plan')}
-          </button>
-          {editingId && (
-            <button type="button" onClick={resetForm}>
-              Cancel
+          
+          <div className="form-group">
+            <label>Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+              rows="3"
+              className="form-textarea"
+            />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Price</label>
+              <input
+                type="text"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+                placeholder="$99"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Price Period</label>
+              <select
+                name="price_period"
+                value={formData.price_period}
+                onChange={handleInputChange}
+                className="form-select"
+              >
+                <option value="/month">/month</option>
+                <option value="/year">/year</option>
+                <option value="one-time">one-time</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label>Features (one per line)</label>
+            <textarea
+              name="features"
+              value={formData.features}
+              onChange={handleInputChange}
+              rows="6"
+              placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
+              required
+              className="form-textarea"
+            />
+          </div>
+          
+          <div className="form-actions">
+            <button type="submit" disabled={loading} className="btn btn-primary">
+              {loading ? 'Saving...' : (editingId ? 'Update Plan' : 'Add Plan')}
             </button>
-          )}
-        </div>
-      </form>
+            {editingId && (
+              <button type="button" onClick={resetForm} className="btn btn-secondary">
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
       
-      <div className="admin-list">
-        <h3>Existing Pricing Plans</h3>
+      <div className="pricing-list-section">
+        <h3 className="section-subtitle">Existing Pricing Plans</h3>
         {pricingPlans.length === 0 ? (
-          <p>No pricing plans found.</p>
+          <p className="no-items">No pricing plans found.</p>
         ) : (
-          <div className="items-grid">
+          <div className="pricing-grid">
             {pricingPlans.map(plan => (
-              <div key={plan.id} className="item-card">
-                <div className="item-header">
-                  <h4>{plan.name}</h4>
-                  {plan.badge && <span className="badge">{plan.badge}</span>}
+              <div key={plan.id} className="pricing-card">
+                <div className="card-header">
+                  <h4 className="plan-name">{plan.name}</h4>
+                  {plan.badge && <span className="plan-badge">{plan.badge}</span>}
                 </div>
-                <p className="price">{plan.price}{plan.price_period}</p>
-                <p>{plan.description}</p>
-                <ul>
+                <div className="plan-price">{plan.price}{plan.price_period}</div>
+                <p className="plan-description">{plan.description}</p>
+                <ul className="plan-features">
                   {plan.features.slice(0, 3).map((feature, i) => (
-                    <li key={i}>✓ {feature}</li>
+                    <li key={i} className="feature-item">✓ {feature}</li>
                   ))}
-                  {plan.features.length > 3 && <li>+{plan.features.length - 3} more</li>}
+                  {plan.features.length > 3 && <li className="feature-more">+{plan.features.length - 3} more features</li>}
                 </ul>
-                <div className="item-actions">
-                  <button onClick={() => handleEdit(plan)}>Edit</button>
-                  <button onClick={() => handleDelete(plan.id)} className="delete-btn">Delete</button>
+                <div className="card-actions">
+                  <button onClick={() => handleEdit(plan)} className="btn btn-outline">Edit</button>
+                  <button onClick={() => handleDelete(plan.id)} className="btn btn-danger">Delete</button>
                 </div>
               </div>
             ))}
