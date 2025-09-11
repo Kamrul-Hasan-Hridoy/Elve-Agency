@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './ProjectManager.css';
 
 const ProjectManager = ({ setMessage }) => {
   const [projects, setProjects] = useState([]);
@@ -136,130 +137,169 @@ const ProjectManager = ({ setMessage }) => {
   };
 
   if (loading) {
-    return <div className="loading">Loading projects...</div>;
+    return (
+      <div className="project-manager-container">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Loading projects...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="admin-section">
-      <h2>Manage Projects</h2>
+    <div className="project-manager-container">
+      <h2 className="section-title animate-fade-in">Manage Projects</h2>
       
-      <form onSubmit={handleSubmit} className="admin-form">
-        <div className="form-group">
-          <label>Title:</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
+      <form onSubmit={handleSubmit} className="project-form animate-slide-in">
+        <div className="form-header">
+          <h3>{editingProject ? 'Edit Project' : 'Add New Project'}</h3>
+          <div className="accent-line"></div>
         </div>
         
-        <div className="form-group">
-          <label>Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            required
-          />
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="input-label">Title:</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+              placeholder="Enter project title"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label className="input-label">Category:</label>
+            <input
+              type="text"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+              placeholder="Enter project category"
+            />
+          </div>
+          
+          <div className="form-group full-width">
+            <label className="input-label">Description:</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className="form-textarea"
+              required
+              rows="4"
+              placeholder="Enter project description"
+            />
+          </div>
+          
+          <div className="form-group full-width">
+            <label className="input-label">Image URL:</label>
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
+              onChange={handleInputChange}
+              className="form-input"
+              placeholder="Enter image URL"
+            />
+          </div>
+          
+          <div className="form-group full-width">
+            <label className="input-label">Tags (comma separated):</label>
+            <input
+              type="text"
+              name="tags"
+              value={formData.tags}
+              onChange={handleInputChange}
+              className="form-input"
+              placeholder="Enter tags separated by commas"
+            />
+          </div>
         </div>
         
-        <div className="form-group">
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-            rows="4"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Image URL:</label>
-          <input
-            type="text"
-            name="image"
-            value={formData.image}
-            onChange={handleInputChange}
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Tags (comma separated):</label>
-          <input
-            type="text"
-            name="tags"
-            value={formData.tags}
-            onChange={handleInputChange}
-          />
-        </div>
-        
-        <button type="submit" className="submit-btn">
-          {editingProject ? 'Update Project' : 'Add Project'}
-        </button>
-        
-        {editingProject && (
-          <button 
-            type="button" 
-            onClick={() => {
-              setEditingProject(null);
-              setFormData({
-                title: '',
-                category: '',
-                description: '',
-                image: '',
-                tags: ''
-              });
-            }}
-            className="cancel-btn"
-          >
-            Cancel Edit
+        <div className="form-actions">
+          <button type="submit" className="btn-primary">
+            {editingProject ? 'Update Project' : 'Add Project'}
           </button>
-        )}
+          
+          {editingProject && (
+            <button 
+              type="button" 
+              onClick={() => {
+                setEditingProject(null);
+                setFormData({
+                  title: '',
+                  category: '',
+                  description: '',
+                  image: '',
+                  tags: ''
+                });
+              }}
+              className="btn-secondary"
+            >
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </form>
       
-      <div className="admin-list">
-        <h3>Existing Projects</h3>
+      <div className="projects-section animate-fade-in">
+        <div className="section-header">
+          <h3>Existing Projects</h3>
+          <div className="accent-line"></div>
+        </div>
+        
         {projects.length === 0 ? (
-          <p>No projects found</p>
+          <div className="empty-state">
+            <div className="empty-icon">📁</div>
+            <p>No projects found. Add your first project to get started!</p>
+          </div>
         ) : (
-          <div className="items-grid">
+          <div className="projects-grid">
             {projects.map(project => (
-              <div key={project.id || project._id} className="item-card">
-                <div className="item-image">
-                  {project.image && (
+              <div key={project.id || project._id} className="project-card">
+                <div className="card-image">
+                  {project.image ? (
                     <img 
                       src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/images/${project.image}`} 
                       alt={project.title}
                     />
+                  ) : (
+                    <div className="image-placeholder">
+                      <span>📷</span>
+                    </div>
                   )}
+                  <div className="card-overlay">
+                    <button 
+                      onClick={() => handleEdit(project)}
+                      className="icon-btn edit-btn"
+                      title="Edit project"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(project.id || project._id)}
+                      className="icon-btn delete-btn"
+                      title="Delete project"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-                <div className="item-details">
-                  <h4>{project.title}</h4>
-                  <p className="category">{project.category}</p>
-                  <p className="description">{project.description}</p>
-                  <div className="tags">
+                <div className="card-content">
+                  <h4 className="card-title">{project.title}</h4>
+                  <span className="category-tag">{project.category}</span>
+                  <p className="card-description">{project.description}</p>
+                  <div className="tags-container">
                     {project.tags && project.tags.map((tag, index) => (
                       <span key={index} className="tag">{tag}</span>
                     ))}
                   </div>
-                </div>
-                <div className="item-actions">
-                  <button 
-                    onClick={() => handleEdit(project)}
-                    className="edit-btn"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(project.id || project._id)}
-                    className="delete-btn"
-                  >
-                    Delete
-                  </button>
                 </div>
               </div>
             ))}
