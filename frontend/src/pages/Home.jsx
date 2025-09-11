@@ -18,6 +18,7 @@ const Home = () => {
   const [questionEmail, setQuestionEmail] = useState("");
   const [questionSubmitted, setQuestionSubmitted] = useState(false);
 
+  // 🔗 Utility: build full URL for backend images
   const getImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith("http") || path.startsWith("//")) {
@@ -49,19 +50,12 @@ const Home = () => {
             fetch(`${import.meta.env.VITE_API_BASE_URL}/api/pricing`),
           ]);
 
-        const servicesData = await servicesRes.json();
-        const projectsData = await projectsRes.json();
-        const testimonialsData = await testimonialsRes.json();
-        const clientsData = await clientsRes.json();
-        const faqsData = await faqsRes.json();
-        const pricingData = await pricingRes.json();
-
-        setServices(servicesData);
-        setProjects(projectsData);
-        setTestimonials(testimonialsData);
-        setClients(clientsData);
-        setFaqs(faqsData);
-        setPricing(pricingData);
+        setServices(await servicesRes.json());
+        setProjects(await projectsRes.json());
+        setTestimonials(await testimonialsRes.json());
+        setClients(await clientsRes.json());
+        setFaqs(await faqsRes.json());
+        setPricing(await pricingRes.json());
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -122,14 +116,26 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Header Section */}
+      {/* Hero Section */}
       <section className="hero-section">
         <div className="container">
+          {/* Shape Image from static/images backend folder */}
+          <div className="shape">
+            <img
+              src={getImageUrl(homeData.header?.shapeImage || "shape.png")}
+              alt="shape"
+            />
+          </div>
+
+          {/* Header Content */}
           <div className="header-content">
-            <h1 dangerouslySetInnerHTML={{ __html: homeData.header?.title || "" }} />
+            <h1
+              dangerouslySetInnerHTML={{ __html: homeData.header?.title || "" }}
+            />
             <p>{homeData.header?.description || ""}</p>
           </div>
 
+          {/* Banner Section */}
           <div className="banner-container">
             <div className="video-box">
               <img
@@ -153,17 +159,22 @@ const Home = () => {
 
       {/* Banner Image */}
       <div className="banner-img">
-        <img src={getImageUrl(homeData.bannerImage)} alt="Banner" className="main-banner" />
+        <img
+          src={getImageUrl(homeData.bannerImage)}
+          alt="Banner"
+          className="main-banner"
+        />
       </div>
 
       {/* Service Section Title */}
       <section className="service-section">
-        <div className="container">
+
           <h2
-            className="section-title"
-            dangerouslySetInnerHTML={{ __html: homeData.serviceSection?.title || "" }}
+            className="sections-titles"
+            dangerouslySetInnerHTML={{
+              __html: homeData.serviceSection?.title || "",
+            }}
           />
-        </div>
       </section>
 
       {/* Projects Section */}
@@ -245,8 +256,7 @@ const Home = () => {
 
       {/* Testimonials Section */}
       <section className="testimonial-section">
-        <div className="container">
-          <div className="testimonial-content">
+          <div className="testimonial-contents">
             <h2>
               Hear it from <br /> our clients
             </h2>
@@ -276,7 +286,6 @@ const Home = () => {
               </div>
             ))}
           </div>
-        </div>
       </section>
 
       {/* Pricing Section */}
