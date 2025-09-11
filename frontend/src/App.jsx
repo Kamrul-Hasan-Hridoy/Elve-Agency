@@ -11,7 +11,7 @@ import Projects from "./pages/Projects";
 import About from "./pages/About";
 import BlogDetails from "./pages/BlogDetails";
 import ProjectDetails from "./pages/ProjectDetails";
-import './styles/admin.css';
+
 
 function App() {
   return (
