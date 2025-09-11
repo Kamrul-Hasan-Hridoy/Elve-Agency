@@ -1,0 +1,261 @@
+/* AboutManager.css */
+.about-manager {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1rem;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background-color: #edf2f7;
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  background-color: #4299e1;
+  color: white;
+  border-color: #4299e1;
+  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+}
+
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.form-input,
+.form-textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #4299e1;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #3182ce;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #4299e1;
+  color: #4299e1;
+}
+
+.btn-outline:hover {
+  background-color: #ebf4ff;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: #f56565;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #e53e3e;
+  transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.array-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+}
+
+.array-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.array-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.array-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.values-grid,
+.team-grid,
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.25rem;
+  color: #718096;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .about-manager {
+    padding: 1rem;
+  }
+  
+  .section-tabs {
+    flex-direction: column;
+  }
+  
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .values-grid,
+  .team-grid,
+  .awards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-section {
+    padding: 1.5rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .card-header .btn {
+    align-self: flex-end;
+  }
+}
