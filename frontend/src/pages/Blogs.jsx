@@ -13,26 +13,25 @@ const Blogs = () => {
     return `${import.meta.env.VITE_API_BASE_URL}${path}`;
   };
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/blogs`)
       .then((res) => res.json())
       .then((data) => {
         setAllBlogs(data);
-        
-        // Prioritize "The importance of ADA compliance in web design" as featured blog
-        const adaBlogIndex = data.findIndex(blog => 
+
+        // Prioritize ADA compliance blog as featured
+        const adaBlogIndex = data.findIndex(blog =>
           blog.title === "The importance of ADA compliance in web design"
         );
-        
+
         if (adaBlogIndex !== -1) {
-          // If ADA blog exists, set it as featured
           setFeaturedBlog(data[adaBlogIndex]);
-          // Remove it from the grid blogs
           const remainingBlogs = [...data];
           remainingBlogs.splice(adaBlogIndex, 1);
           setGridBlogs(remainingBlogs);
         } else if (data.length > 0) {
-          // Fallback to first blog as featured
           setFeaturedBlog(data[0]);
           setGridBlogs(data.slice(1));
         }
@@ -40,16 +39,14 @@ const Blogs = () => {
       .catch((err) => console.error("Error fetching blogs:", err));
   }, []);
 
-  // Filter blogs by category
   const filterBlogs = (category) => {
     setActiveFilter(category);
-    
+
     if (category === "All Blog") {
-      // For "All Blog", use the original prioritization
-      const adaBlogIndex = allBlogs.findIndex(blog => 
+      const adaBlogIndex = allBlogs.findIndex(blog =>
         blog.title === "The importance of ADA compliance in web design"
       );
-      
+
       if (adaBlogIndex !== -1) {
         setFeaturedBlog(allBlogs[adaBlogIndex]);
         const remainingBlogs = [...allBlogs];
@@ -60,7 +57,6 @@ const Blogs = () => {
         setGridBlogs(allBlogs.slice(1));
       }
     } else {
-      // For category filters, just filter without special prioritization
       const filtered = allBlogs.filter(blog => blog.category === category);
       if (filtered.length > 0) {
         setFeaturedBlog(filtered[0]);
@@ -74,40 +70,55 @@ const Blogs = () => {
 
   return (
     <>
-      <section className="recent-work">
-        <h1>Latest Blogs</h1>
+
+
+      {/* Blog Section */}
+      <section className="blogs-section">
+              {/* Shape Image at top */}
+      <div className="shape">
+        <img
+          src={fallbackShape} 
+          alt="shape"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = fallbackShape;
+          }}
+        />
+      </div>
+
+        <h1 className="latests">Latest Blogs</h1>
         <div className="filters">
-          <button 
+          <button
             className={activeFilter === "All Blog" ? "active" : ""}
             onClick={() => filterBlogs("All Blog")}
           >
             All Blog
           </button>
-          <button 
+          <button
             className={activeFilter === "Buisness" ? "active" : ""}
             onClick={() => filterBlogs("Buisness")}
           >
             Buisness
           </button>
-          <button 
+          <button
             className={activeFilter === "Startups" ? "active" : ""}
             onClick={() => filterBlogs("Startups")}
           >
             Startups
           </button>
-          <button 
+          <button
             className={activeFilter === "Marketing" ? "active" : ""}
             onClick={() => filterBlogs("Marketing")}
           >
             Marketing
           </button>
-          <button 
+          <button
             className={activeFilter === "Design" ? "active" : ""}
             onClick={() => filterBlogs("Design")}
           >
             Design
           </button>
-          <button 
+          <button
             className={activeFilter === "News & Events" ? "active" : ""}
             onClick={() => filterBlogs("News & Events")}
           >
@@ -116,7 +127,7 @@ const Blogs = () => {
         </div>
       </section>
 
-      {/* Featured Blog Card */}
+      {/* Featured Blog */}
       {featuredBlog && (
         <div className="blog-post">
           <div className="blog-title">
@@ -140,7 +151,6 @@ const Blogs = () => {
                   <a href="#">⏱ {featuredBlog.read_time}</a>
                 </button>
               </div>
-              {/* Use numeric ID if available, otherwise use _id */}
               <Link to={`/blogs/${featuredBlog.id || featuredBlog._id}`} className="read-more">
                 Read More
               </Link>
@@ -161,7 +171,6 @@ const Blogs = () => {
                 <span>📅 {blog.date}</span>
                 <span>⏱ {blog.read_time}</span>
               </div>
-              {/* Use numeric ID if available, otherwise use _id */}
               <Link to={`/blogs/${blog.id || blog._id}`} className="read-more">
                 Read More
               </Link>
