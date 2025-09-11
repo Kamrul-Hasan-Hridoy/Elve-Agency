@@ -42,20 +42,31 @@ const Footer = () => {
             <div>
               <ul>
                 <li>
-                  <Link to="#">Twitter/X</Link>
-                </li>
-                <li>
-                  <Link to="#">Instagram</Link>
-                </li>
-                <li>
-                  <Link to="#">LinkedIn</Link>
-                </li>
-                <li>
-                  <Link to="#">Facebook</Link>
-                </li>
-                <li>
-                  <Link to="#">YouTube</Link>
-                </li>
+  <Link to="https://twitter.com/" target="_blank" rel="noopener noreferrer">
+    Twitter/X
+  </Link>
+</li>
+<li>
+  <Link to="https://instagram.com/" target="_blank" rel="noopener noreferrer">
+    Instagram
+  </Link>
+</li>
+<li>
+  <Link to="https://linkedin.com/" target="_blank" rel="noopener noreferrer">
+    LinkedIn
+  </Link>
+</li>
+<li>
+  <Link to="https://facebook.com/" target="_blank" rel="noopener noreferrer">
+    Facebook
+  </Link>
+</li>
+<li>
+  <Link to="https://youtube.com/" target="_blank" rel="noopener noreferrer">
+    YouTube
+  </Link>
+</li>
+
               </ul>
             </div>
           </div>
