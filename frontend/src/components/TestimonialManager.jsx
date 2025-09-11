@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './TestimonialManager.css';
 
 const TestimonialManager = ({ setMessage }) => {
   const [testimonials, setTestimonials] = useState([]);
@@ -40,7 +41,6 @@ const TestimonialManager = ({ setMessage }) => {
     fetchTestimonials();
   }, []);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -49,7 +49,6 @@ const TestimonialManager = ({ setMessage }) => {
     }));
   };
 
-  // Handle form submission (add or update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -58,12 +57,10 @@ const TestimonialManager = ({ setMessage }) => {
       let url, method;
       
       if (editingTestimonial) {
-        // For updates, use the ID from the testimonial being edited
         const testimonialId = editingTestimonial.id || editingTestimonial._id;
         url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials/${testimonialId}`;
         method = 'PUT';
       } else {
-        // For new testimonials, don't include an ID ,backend generate it
         url = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}/api/admin/testimonials`;
         method = 'POST';
       }
@@ -95,7 +92,7 @@ const TestimonialManager = ({ setMessage }) => {
         });
         
         setEditingTestimonial(null);
-        fetchTestimonials(); // Refresh the list
+        fetchTestimonials();
       } else {
         setMessage({ 
           text: responseData.error || 'Failed to save testimonial', 
@@ -107,7 +104,6 @@ const TestimonialManager = ({ setMessage }) => {
     }
   };
 
-  // Edit a testimonial
   const handleEdit = (testimonial) => {
     setEditingTestimonial(testimonial);
     setFormData({
@@ -118,7 +114,6 @@ const TestimonialManager = ({ setMessage }) => {
     });
   };
 
-  // Delete a testimonial
   const handleDelete = async (testimonial) => {
     if (!window.confirm('Are you sure you want to delete this testimonial?')) {
       return;
@@ -142,7 +137,7 @@ const TestimonialManager = ({ setMessage }) => {
       
       if (response.ok) {
         setMessage({ text: 'Testimonial deleted successfully', type: 'success' });
-        fetchTestimonials(); // Refresh the list
+        fetchTestimonials();
       } else {
         setMessage({ 
           text: responseData.error || 'Failed to delete testimonial', 
@@ -154,7 +149,6 @@ const TestimonialManager = ({ setMessage }) => {
     }
   };
 
-  // Cancel editing
   const handleCancel = () => {
     setEditingTestimonial(null);
     setFormData({
@@ -165,83 +159,78 @@ const TestimonialManager = ({ setMessage }) => {
     });
   };
 
-  // Build image URL - handle both relative and absolute URLs
   const buildImageUrl = (imgPath) => {
     if (!imgPath) return '/images/placeholder.png';
-    
-    // If it's already a full URL, return as is
     if (imgPath.startsWith('http')) return imgPath;
-    
-    // If it's a relative path, prepend the base URL
     return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'}${imgPath}`;
   };
 
   if (loading) {
-    return <div className="loading">Loading testimonials...</div>;
+    return <div className="admin-loading">Loading testimonials...</div>;
   }
 
   return (
     <div className="testimonial-manager">
       <div className="admin-page-header">
-        <h2>Testimonial Management</h2>
-        <p>Add, edit, or remove customer testimonials from your website</p>
+        <h2 className="section-title">Testimonial Management</h2>
+        <p className="section-subtitle">.. ... ..</p>
       </div>
       
-      <div className="admin-content-card">
+      <div className="form-section">
         <h3 className="form-title">{editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}</h3>
         
-        <form onSubmit={handleSubmit} className="admin-form">
+        <form onSubmit={handleSubmit} className="testimonial-form">
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Customer Name *</label>
+              <label>Customer Name *</label>
               <input
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
                 placeholder="Enter customer's full name"
+                className="form-input"
               />
             </div>
             
             <div className="form-group">
-              <label htmlFor="role">Role/Position *</label>
+              <label>Role/Position *</label>
               <input
                 type="text"
-                id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
                 required
                 placeholder="e.g., CEO, Marketing Director"
+                className="form-input"
               />
             </div>
           </div>
           
           <div className="form-group">
-            <label htmlFor="desc">Testimonial Text *</label>
+            <label>Testimonial Text *</label>
             <textarea
-              id="desc"
               name="desc"
               value={formData.desc}
               onChange={handleInputChange}
               required
               rows="4"
               placeholder="What did the customer say about your service?"
+              className="form-textarea"
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="img">Profile Image URL</label>
+            <label>Profile Image URL</label>
             <div className="input-with-preview">
               <input
                 type="text"
-                id="img"
                 name="img"
                 value={formData.img}
                 onChange={handleInputChange}
                 placeholder="/images/profile.jpg"
+                className="form-input"
               />
               {formData.img && (
                 <div className="image-preview">
@@ -255,7 +244,7 @@ const TestimonialManager = ({ setMessage }) => {
                 </div>
               )}
             </div>
-            <p className="input-help-text">Leave blank to use default profile image</p>
+            <p className="input-help">Leave blank to use default profile image</p>
           </div>
           
           <div className="form-actions">
@@ -278,15 +267,15 @@ const TestimonialManager = ({ setMessage }) => {
         </form>
       </div>
       
-      <div className="admin-content-card">
-        <div className="card-header">
-          <h3>Existing Testimonials</h3>
+      <div className="testimonial-list-section">
+        <div className="section-header">
+          <h3 className="section-subtitle">Existing Testimonials</h3>
           <span className="items-count">{testimonials.length} testimonials</span>
         </div>
         
         {testimonials.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">💬</div>
+            <div className="empty-icon">💬</div>
             <h4>No testimonials yet</h4>
             <p>Add your first testimonial to build trust with potential customers</p>
           </div>
@@ -319,16 +308,16 @@ const TestimonialManager = ({ setMessage }) => {
                   <div className="testimonial-actions">
                     <button 
                       onClick={() => handleEdit(testimonial)}
-                      className="btn btn-sm btn-outline"
+                      className="btn btn-outline"
                     >
-                      <span className="icon">✏️</span> Edit
+                      <span className="btn-icon">✏️</span> Edit
                     </button>
                     
                     <button 
                       onClick={() => handleDelete(testimonial)}
-                      className="btn btn-sm btn-outline btn-danger"
+                      className="btn btn-danger"
                     >
-                      <span className="icon">🗑️</span> Delete
+                      <span className="btn-icon">🗑️</span> Delete
                     </button>
                   </div>
                 </div>
