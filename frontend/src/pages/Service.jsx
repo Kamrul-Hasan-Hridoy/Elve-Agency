@@ -15,23 +15,28 @@ const Service = () => {
     return `${import.meta.env.VITE_API_BASE_URL}${path}`;
   };
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   const toggleFaq = (id) => {
-    setOpenFaqId(prev => (prev === id ? null : id));
+    setOpenFaqId((prev) => (prev === id ? null : id));
   };
 
   const handleQuestionSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/submit-question`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: questionText,
-          email: questionEmail
-        })
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/submit-question`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: questionText,
+            email: questionEmail,
+          }),
+        }
+      );
 
       if (response.ok) {
         setQuestionSubmitted(true);
@@ -71,38 +76,53 @@ const Service = () => {
 
   return (
     <>
-      {/* Services Banner */}
-      <section className="services-banner">
-        <h2>
-          Services
-          <br />
-          We Provide
-        </h2>
-      </section>
+      {/* Services Section with Shape */}
+      <section className="services-section">
+        {/* Shape Image */}
+        <div className="shape">
+          <img
+            src={fallbackShape}
+            alt="shape"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallbackShape;
+            }}
+          />
+        </div>
 
-      {/* Services Detail */}
-      <section className="services-detail-section">
-        {services.map((service, index) => (
-          <div className="service-box" key={index}>
-            <div className="service-text">
-              <div className="icon-title">
-                <img src={getImageUrl(service.icon)} alt={service.title} />
-                <h2>{service.title}</h2>
+        {/* Services Banner */}
+        <div className="services-banner">
+          <h2>
+            Services
+            <br />
+            We Provide
+          </h2>
+        </div>
+
+        {/* Services Detail */}
+        <div className="services-detail-section">
+          {services.map((service, index) => (
+            <div className="service-box" key={index}>
+              <div className="service-text">
+                <div className="icon-title">
+                  { <img src={getImageUrl(service.icon)} alt={service.title} /> }
+                  <h2>{service.title}</h2>
+                </div>
+                <p>{service.desc}</p>
+                <div className="brand-right">
+                  <ul>
+                    {service.list.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <p>{service.desc}</p>
-              <div className="brand-right">
-                <ul>
-                  {service.list.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
+              <div className="service-image">
+                <img src={getImageUrl(service.image)} alt={service.title} />
               </div>
             </div>
-            <div className="service-image">
-              <img src={getImageUrl(service.image)} alt={service.title} />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
       {/* Testimonial Section */}
@@ -143,20 +163,26 @@ const Service = () => {
           </h1>
         </div>
         <div className="faq-container">
-          {faqs.map(faq => (
-            <div key={faq.id} className={`faq-item ${openFaqId === faq.id ? "open" : ""}`}>
-              <button className="faq-question" onClick={() => toggleFaq(faq.id)}>
+          {faqs.map((faq) => (
+            <div
+              key={faq.id}
+              className={`faq-item ${openFaqId === faq.id ? "open" : ""}`}
+            >
+              <button
+                className="faq-question"
+                onClick={() => toggleFaq(faq.id)}
+              >
                 {faq.question}
                 <span className="icon">{openFaqId === faq.id ? "-" : "+"}</span>
               </button>
               <div className="faq-answer">{faq.answer}</div>
             </div>
           ))}
-          
+
           {/* Question Submission Form */}
           <div className="question-submission">
             {!showQuestionForm ? (
-              <button 
+              <button
                 className="ask-question-btn"
                 onClick={() => setShowQuestionForm(true)}
               >
@@ -180,10 +206,17 @@ const Service = () => {
                 />
                 <div className="question-form-buttons">
                   <button type="submit">Submit Question</button>
-                  <button type="button" onClick={() => setShowQuestionForm(false)}>Cancel</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowQuestionForm(false)}
+                  >
+                    Cancel
+                  </button>
                 </div>
                 {questionSubmitted && (
-                  <p className="success-message">Thank you! Your question has been submitted.</p>
+                  <p className="success-message">
+                    Thank you! Your question has been submitted.
+                  </p>
                 )}
               </form>
             )}
