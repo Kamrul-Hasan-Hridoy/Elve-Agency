@@ -12,6 +12,8 @@ const Contact = () => {
   const [faqs, setFaqs] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
 
+  const fallbackShape = `${import.meta.env.VITE_API_BASE_URL}/images/shape.png`;
+
   // Fetch FAQs from backend
   useEffect(() => {
     fetchFaqs();
@@ -95,67 +97,82 @@ const Contact = () => {
 
   return (
     <>
-      <div className="contact-container">
-        <h1>Connect With Us</h1>
+      {/* Contact Section with Shape */}
+      <div className="contact-section">
+        {/* Shape Image */}
+        <div className="shape">
+          <img
+            src={fallbackShape}
+            alt="shape"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = fallbackShape;
+            }}
+          />
+        </div>
 
-        <div className="contact-card">
-          <div className="contact-info">
-            <h2>Contact info</h2>
-            <p>
-              <strong>ADDRESS</strong> 2972 Westheimer Rd. Santa Ana, Illinois
-              85486
-            </p>
-            <p>
-              <strong>PHONE</strong> +12 383 343 332 4580
-            </p>
-            <p>
-              <strong>EMAIL</strong> info@evility.com
-            </p>
-          </div>
+        <div className="contact-container">
+          <h1>Connect With Us</h1>
 
-          <div className="contact-form">
-            <h2>Get in touch</h2>
-            {submitStatus && (
-              <div className={`submit-status ${submitStatus.type}`}>
-                {submitStatus.message}
-              </div>
-            )}
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Full Name"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email Address"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-              />
-              <textarea
-                rows="4"
-                placeholder="Enter your Message..."
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                required
-              />
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send a message →"}
-              </button>
-            </form>
+          <div className="contact-card">
+            <div className="contact-info">
+              <h2>Contact info</h2>
+              <p>
+                <strong>ADDRESS</strong> 2972 Westheimer Rd. Santa Ana, Illinois
+                85486
+              </p>
+              <p>
+                <strong>PHONE</strong> +12 383 343 332 4580
+              </p>
+              <p>
+                <strong>EMAIL</strong> info@evility.com
+              </p>
+            </div>
+
+            <div className="contact-form">
+              <h2>Get in touch</h2>
+              {submitStatus && (
+                <div className={`submit-status ${submitStatus.type}`}>
+                  {submitStatus.message}
+                </div>
+              )}
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+                <textarea
+                  rows="4"
+                  placeholder="Enter your Message..."
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  required
+                />
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send a message →"}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
