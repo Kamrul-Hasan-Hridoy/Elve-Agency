@@ -125,7 +125,7 @@ const Contact = () => {
                 <strong>PHONE</strong> +12 383 343 332 4580
               </p>
               <p>
-                <strong>EMAIL</strong> info@evility.com
+                <strong>EMAIL</strong> info@elve.com
               </p>
             </div>
 
