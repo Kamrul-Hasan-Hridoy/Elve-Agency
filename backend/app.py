@@ -24,18 +24,29 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+# @app.after_request
+# def add_security_headers(response):
+#     response.headers['Content-Security-Policy'] = (
+#         "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
+#         "script-src * 'unsafe-inline' 'unsafe-eval' blob:; "
+#         "style-src * 'unsafe-inline'; "
+#         "img-src * data: blob:; "
+#         "font-src * data:; "
+#         "connect-src *; "
+#         "media-src *; "
+#         "object-src *; "
+#         "frame-src *;"
+#     )
+#     return response
 @app.after_request
 def add_security_headers(response):
     response.headers['Content-Security-Policy'] = (
-        "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; "
-        "script-src * 'unsafe-inline' 'unsafe-eval' blob:; "
-        "style-src * 'unsafe-inline'; "
-        "img-src * data: blob:; "
-        "font-src * data:; "
-        "connect-src *; "
-        "media-src *; "
-        "object-src *; "
-        "frame-src *;"
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: https://i.ytimg.com; "
+        "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; "
+        "child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;"
     )
     return response
 
@@ -56,7 +67,7 @@ app.register_blueprint(testimonials_bp, url_prefix='/api')
 app.register_blueprint(contact_bp, url_prefix='/api')
 app.register_blueprint(clients_bp, url_prefix='/api')
 app.register_blueprint(faqs_bp, url_prefix='/api')
-app.register_blueprint(admin_bp, url_prefix='/api')
+app.register_blueprint(admin_bp, url_prefix='/api/')
 
 @app.route('/')
 def index():
@@ -78,11 +89,11 @@ def serve_images(filename):
     
     # If not found, try other possible locations
     possible_dirs = [
-        os.path.join(app.root_path, 'data', 'images'),
-        os.path.join(app.root_path, '..', 'data', 'images'),
-        os.path.join(app.root_path, '..', 'frontend', 'public', 'images'),
+        # os.path.join(app.root_path, 'data', 'images'),
+        # os.path.join(app.root_path, '..', 'data', 'images'),
+        # os.path.join(app.root_path, '..', 'frontend', 'public', 'images'),
         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'images'),
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'images'),
+        # os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'images'),
     ]
     
     for images_dir in possible_dirs:
