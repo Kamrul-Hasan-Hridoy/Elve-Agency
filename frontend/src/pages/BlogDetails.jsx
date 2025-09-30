@@ -77,7 +77,7 @@ const BlogDetails = () => {
   return (
     <div className="blog-details-section">
       {/* Shape Background */}
-      <div className="shape">
+      {/* <div className="shape">
         <img
           src={fallbackShape}
           alt="shape"
@@ -86,7 +86,7 @@ const BlogDetails = () => {
             e.currentTarget.src = fallbackShape;
           }}
         />
-      </div>
+      </div> */}
 
       {/* Navigation Header */}
       <header className="blog-details-header container">
